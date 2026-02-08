@@ -1,0 +1,12 @@
+services:
+  # 画像の加工・S3/DynamoDBへの登録を担うサービス
+  photo-processor:
+    build: .
+    container_name: photo-processor
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+      # 今後、AWSの認証情報を入れるための準備
+      - AWS_ENV=local
+    tty: true

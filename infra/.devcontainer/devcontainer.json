@@ -1,0 +1,19 @@
+{
+    "name": "Photolog-Infra",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": "."
+    },
+    // infra フォルダをコンテナのルートとして認識させる
+    "workspaceFolder": "/workspaces/infra",
+    "runArgs": ["--env-file", ".env"],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "amazonwebservices.aws-toolkit-vscode"
+            ]
+        }
+    },
+    "remoteUser": "vscode"
+}
