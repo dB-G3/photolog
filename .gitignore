@@ -12,6 +12,9 @@ package-lock.json
 test-data/
 
 
+# local_processor
+local_processor/test/
+
 # --- Python standard ---
 # Byte-compiled / optimized / DLL files
 __pycache__/
