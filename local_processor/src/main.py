@@ -1,5 +1,6 @@
 import os
 from PIL import Image
+from pillow_heif import register_heif_opener
 from pathlib import Path
 from PIL.ExifTags import TAGS
 from PIL import ImageOps
@@ -13,12 +14,18 @@ INPUT_DIR = os.path.join(BASE_DIR, "test-data/input")
 OUTPUT_DIR = os.path.join(BASE_DIR, "test-data/output")
 LOGFILE_NAME = "log.txt"
 
+# HEICをPillowで開けるように登録
+register_heif_opener()
+
 # EXIF情報を抽出
 def get_exif_data(img_file):
     # 画像を開く
     with Image.open(img_file) as img:
         # Exif情報を取得
-        exif_raw = img._getexif()
+        if img_file.suffix.lower() in [".jpg", ".jpeg"]:
+            exif_raw = img._getexif()
+        elif  img_file.suffix.lower() in [".heic"]:
+            exif_raw = img.getexif()
         
         if not exif_raw:
             print("Exif情報なし")
@@ -75,19 +82,20 @@ if __name__ == "__main__":
             # 保存先のフォルダがなければ作成 (mkdir -p 相当)
             save_path.parent.mkdir(parents=True, exist_ok=True)
 
-            if img_file.suffix.lower() in [".jpg", ".jpeg"]:
+            if img_file.suffix.lower() in [".jpg", ".jpeg", ".heic"]:
                 #print(f"EXIF抽出開始: {relative_path}") 
                 exif_data = get_exif_data(img_file)
                 
                 #print(f"リサイズ開始: {relative_path}")
                 img = process_image(img_file, TARGET_WIDTH, TARGET_HEIGHT, save_path, relative_path)
 
-                if(exif_data.get('DateTimeOriginal')):
-                    #log_data = log_data + f"撮影日: {exif_data.get('DateTimeOriginal')},"
+                if exif_data.get('DateTimeOriginal'): #撮影日時
                     dt = datetime.datetime.strptime(exif_data.get('DateTimeOriginal'), "%Y:%m:%d %H:%M:%S")
-                    #year   = dt.year
-                    #month  = dt.month
                     # ISO 8601形式の文字列に変換
+                    iso_date = dt.isoformat()
+                    log_data = log_data + iso_date +","
+                elif exif_data.get('DateTime'): #修正日時
+                    dt = datetime.datetime.strptime(exif_data.get('DateTime'), "%Y:%m:%d %H:%M:%S")
                     iso_date = dt.isoformat()
                     log_data = log_data + iso_date +","
                 else:
