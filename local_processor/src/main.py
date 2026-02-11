@@ -18,26 +18,33 @@ LOGFILE_NAME = "log.txt"
 register_heif_opener()
 
 # EXIF情報を抽出
-def get_exif_data(img_file):
-    # 画像を開く
-    with Image.open(img_file) as img:
-        # Exif情報を取得
-        if img_file.suffix.lower() in [".jpg", ".jpeg"]:
-            exif_raw = img._getexif()
-        elif  img_file.suffix.lower() in [".heic"]:
-            exif_raw = img.getexif()
-        
-        if not exif_raw:
-            print("Exif情報なし")
-            return None
-
-        exif_data = {}
-        for tag_id, value in exif_raw.items():
-            # タグID（例: 306）を人間が読めるタグ名（例: DateTimeOriginal）に変換
-            tag_name = TAGS.get(tag_id, tag_id)
-            exif_data[tag_name] = value
+def get_exif_data(img_file, relative_path):
+    try:
+        # 画像を開く
+        with Image.open(img_file) as img:
+            # Exif情報を取得
+            if img_file.suffix.lower() in [".jpg", ".jpeg"]:
+                exif_raw = img._getexif()
+            elif  img_file.suffix.lower() in [".heic"]:
+                exif_raw = img.getexif()
             
-        return exif_data
+            if not exif_raw:
+                print("Exif情報なし")
+                return None
+
+            exif_data = {}
+            for tag_id, value in exif_raw.items():
+                # タグID（例: 306）を人間が読めるタグ名（例: DateTimeOriginal）に変換
+                tag_name = TAGS.get(tag_id, tag_id)
+                exif_data[tag_name] = value
+
+            return exif_data
+        
+    except Exception as e:
+        print(f"  [EXIF抽出失敗] {relative_path}: {e}")
+        with open(OUTPUT_DIR + '/' + LOGFILE_NAME,"a") as o:
+            print(relative_path + "EXIF抽出失敗", file=o)
+        return None
 
 # 画像を圧縮
 def process_image(img_file, target_width, target_height, save_path, relative_path):
@@ -51,6 +58,8 @@ def process_image(img_file, target_width, target_height, save_path, relative_pat
             return img
     except Exception as e:
         print(f"  [リサイズ失敗] {relative_path}: {e}")
+        with open(OUTPUT_DIR + '/' + LOGFILE_NAME,"a") as o:
+            print(relative_path + "リサイズ失敗", file=o)
         return None
 
 # 画像ファイルのハッシュ値(SHA-256)を計算    
@@ -84,7 +93,7 @@ if __name__ == "__main__":
 
             if img_file.suffix.lower() in [".jpg", ".jpeg", ".heic"]:
                 #print(f"EXIF抽出開始: {relative_path}") 
-                exif_data = get_exif_data(img_file)
+                exif_data = get_exif_data(img_file, relative_path)
                 
                 #print(f"リサイズ開始: {relative_path}")
                 img = process_image(img_file, TARGET_WIDTH, TARGET_HEIGHT, save_path, relative_path)
