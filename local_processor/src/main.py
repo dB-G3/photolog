@@ -6,9 +6,12 @@ from PIL import ImageOps
 import datetime
 import hashlib
 
-BASE_DIR = "./"
+TARGET_WIDTH = 800
+TARGET_HEIGHT = 600
+BASE_DIR = "../"
 INPUT_DIR = os.path.join(BASE_DIR, "test-data/input")
 OUTPUT_DIR = os.path.join(BASE_DIR, "test-data/output")
+LOGFILE_NAME = "log.txt"
 
 # EXIF情報を抽出
 def get_exif_data(img_file):
@@ -59,9 +62,12 @@ if __name__ == "__main__":
     
     # rglobでサブフォルダ内も含めてJPGを全検索
     for img_file in input_path.rglob("*"):
-        if img_file.suffix.lower() in [".jpg", ".jpeg", ".JPG", ".JPEG"]:
+        log_data = ""
+        if img_file.suffix.lower() in [".jpg", ".jpeg", ".png", ".heic", ".gif", ".mov", ".mp4", ".avi", ".mpeg"]:
             # 入力フォルダからの相対パスを取得 (例: 2024/01/pic.jpg)
             relative_path = img_file.relative_to(input_path)
+            log_data = log_data + str(relative_path) + ","
+            #print(relative_path)
     
             # 保存先のフルパスを決定
             save_path = Path(OUTPUT_DIR) / relative_path
@@ -69,20 +75,26 @@ if __name__ == "__main__":
             # 保存先のフォルダがなければ作成 (mkdir -p 相当)
             save_path.parent.mkdir(parents=True, exist_ok=True)
 
-            #print(f"EXIF抽出開始: {relative_path}") 
-            exif_data = get_exif_data(img_file)
-            
-            #print(f"リサイズ開始: {relative_path}")
-            img = process_image(img_file, 300, 200, save_path, relative_path)
+            if img_file.suffix.lower() in [".jpg", ".jpeg"]:
+                #print(f"EXIF抽出開始: {relative_path}") 
+                exif_data = get_exif_data(img_file)
+                
+                #print(f"リサイズ開始: {relative_path}")
+                img = process_image(img_file, TARGET_WIDTH, TARGET_HEIGHT, save_path, relative_path)
 
-            if(exif_data.get('DateTimeOriginal')):
-                print(f"撮影日: {exif_data.get('DateTimeOriginal')}")
-                dt = datetime.datetime.strptime(exif_data.get('DateTimeOriginal'), "%Y:%m:%d %H:%M:%S")
-                #year   = dt.year
-                #month  = dt.month
-                # ISO 8601形式の文字列に変換
-                iso_date = dt.isoformat()
+                if(exif_data.get('DateTimeOriginal')):
+                    #log_data = log_data + f"撮影日: {exif_data.get('DateTimeOriginal')},"
+                    dt = datetime.datetime.strptime(exif_data.get('DateTimeOriginal'), "%Y:%m:%d %H:%M:%S")
+                    #year   = dt.year
+                    #month  = dt.month
+                    # ISO 8601形式の文字列に変換
+                    iso_date = dt.isoformat()
+                    log_data = log_data + iso_date +","
+                else:
+                    log_data = log_data + "EXIF撮影日情報なし,"
+                hash = calculate_hash(save_path)
+                with open(OUTPUT_DIR + '/' + LOGFILE_NAME,"a") as o:
+                    log_data = log_data + hash + ","
+                    print(log_data, file=o)
             else:
-                print("EXIF撮影日情報なし")
-            hash = calculate_hash(save_path)
-            print(hash)
+                print(relative_path)
