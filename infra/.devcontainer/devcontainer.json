@@ -15,5 +15,8 @@
             ]
         }
     },
-    "remoteUser": "vscode"
+    "remoteUser": "vscode",
+    "containerEnv": {
+        "TZ": "Asia/Tokyo"
+    }
 }
