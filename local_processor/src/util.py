@@ -3,7 +3,7 @@ import hashlib
 import time
 
 #ZIP用
-import zipfile
+import shutil
 
 ERROR_LOGFILE_NAME = "error.txt"
 LOGFILE_NAME = "log.txt"
@@ -33,52 +33,14 @@ def calculate_hash(filepath):
             sha256_hash.update(byte_block)
     return sha256_hash.hexdigest()
 
-def get_file_path(file_path):
-    """
-    ファイルパスから指定以下のファイルの一覧を取得する
-    :param file_path:ファイルパス
-    :return: generator
-    """
-    if os.path.isfile(file_path):
-        yield file_path
-    else:
-        for (base_dir, _ , file_name_list) in os.walk(file_path):
-            for file_name in file_name_list:
-                path = os.path.join(base_dir, file_name)
-                path = path.replace(os.sep, '/')
-                yield path
+from pathlib import Path
+def zip_directory(target_dir):
+    # 圧縮後のファイル名（拡張子 .zip は自動で付与される）
+    # 例: /app/tmp/2025-10-20.zip
+    output_path = target_dir
 
-def zipping(file_path, save_dir=""):
-    """
-    ファイル及びフォルダごとZIP化関数
-    :param file_path: 圧縮対象のファイルおよびディレクトリ
-    :param save_dir: 保存先（デフォルトは圧縮対象と同じ階層）
-    :return:
-    """
-    if file_path[-1]==os.sep or file_path[-1]=="/" :
-        file_path = file_path[:-1]
-
-    if not os.path.isdir(file_path) and not os.path.isfile(file_path):
-        print("Not Found : {}".format(file_path))
-        raise FileNotFoundError
-
-    if os.path.isdir(save_dir):
-        save_dir = os.path.join(save_dir, os.path.basename(file_path))
-    else:
-        save_dir = file_path
-
-    zip_file_name = "{}.zip".format(save_dir)
-
-    print('zip file : {}'.format(zip_file_name))
-    with zipfile.ZipFile(zip_file_name, 'w', zipfile.ZIP_DEFLATED) as z:
-        if os.path.isfile(file_path):
-            print(">>zipping....   {}".format(file_path))
-            file_name = os.path.basename(file_path)
-            z.write(file_path, file_name)
-        else:
-            for file_name in get_file_path(file_path):
-                head, tail = file_name.split(os.path.join(file_path,'').replace(os.sep,'/'))
-                print(">>zipping....   {}".format(file_name))
-                z.write(file_name, tail)
-
-    return zip_file_name
+    # 圧縮実行 (引数: 保存ファイル名, フォーマット, 圧縮したいディレクトリ)
+    shutil.make_archive(output_path, 'zip', root_dir=target_dir)
+    
+    print(f"Zip作成完了: {output_path}.zip")
+    return Path(f"{output_path}.zip")

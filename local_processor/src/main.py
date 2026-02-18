@@ -88,3 +88,11 @@ if __name__ == "__main__":
             util.output_log(OUTPUT_DIR, log_data)
         else:
             util.output_log(OUTPUT_DIR, "処理スキップ：" + str(img_file.relative_to(input_path)))
+
+    print('Zip圧縮開始')
+    tmp_path = Path(OUTPUT_DIR)
+    # tmp直下にあるフォルダだけを対象にする
+    for date_dir in tmp_path.iterdir():
+        if date_dir.is_dir():
+            # フォルダをZipに圧縮
+            zip_file = util.zip_directory(date_dir)
