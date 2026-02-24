@@ -34,10 +34,10 @@ def calculate_hash(filepath):
     return sha256_hash.hexdigest()
 
 from pathlib import Path
-def zip_directory(target_dir):
+def zip_directory(output_path, target_dir):
     # 圧縮後のファイル名（拡張子 .zip は自動で付与される）
     # 例: /app/tmp/2025-10-20.zip
-    output_path = target_dir
+    #output_path = target_dir
 
     # 圧縮実行 (引数: 保存ファイル名, フォーマット, 圧縮したいディレクトリ)
     shutil.make_archive(output_path, 'zip', root_dir=target_dir)

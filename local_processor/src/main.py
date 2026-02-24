@@ -13,6 +13,7 @@ TARGET_HEIGHT = 600
 BASE_DIR = "../"
 INPUT_DIR = os.path.join(BASE_DIR, "test-data/input")
 OUTPUT_DIR = os.path.join(BASE_DIR, "test-data/output")
+OUTPUT_ZIP_DIR = os.path.join(BASE_DIR, "test-data/output/zip")
 
 
 if __name__ == "__main__":
@@ -92,7 +93,13 @@ if __name__ == "__main__":
     print('Zip圧縮開始')
     tmp_path = Path(OUTPUT_DIR)
     # tmp直下にあるフォルダだけを対象にする
+    zip_dir = Path(OUTPUT_ZIP_DIR) / dir_name
+    zip_dir.mkdir(parents=True, exist_ok=True)
     for date_dir in tmp_path.iterdir():
+        print(date_dir.name)
+        if(date_dir.name == os.path.basename(OUTPUT_ZIP_DIR)):
+            continue
         if date_dir.is_dir():
             # フォルダをZipに圧縮
-            zip_file = util.zip_directory(date_dir)
+            zip_path = os.path.join(OUTPUT_ZIP_DIR, date_dir.name)
+            zip_file = util.zip_directory(zip_path, date_dir)
