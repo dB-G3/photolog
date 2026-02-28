@@ -1,6 +1,6 @@
 {
  "Resources": {
-  "PhotologRawBucket2F2DAEE8": {
+  "PhotologRawBucketyasuv228F0992E": {
    "Type": "AWS::S3::Bucket",
    "Properties": {
     "BucketName": "photolog-prod-s3-original-yasu",
@@ -29,14 +29,14 @@
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete",
    "Metadata": {
-    "aws:cdk:path": "InfraStack/PhotologRawBucket/Resource"
+    "aws:cdk:path": "InfraStack/PhotologRawBucket-yasu-v2/Resource"
    }
   },
-  "PhotologRawBucketPolicyC758DC13": {
+  "PhotologRawBucketyasuv2Policy685581FD": {
    "Type": "AWS::S3::BucketPolicy",
    "Properties": {
     "Bucket": {
-     "Ref": "PhotologRawBucket2F2DAEE8"
+     "Ref": "PhotologRawBucketyasuv228F0992E"
     },
     "PolicyDocument": {
      "Statement": [
@@ -59,7 +59,7 @@
        "Resource": [
         {
          "Fn::GetAtt": [
-          "PhotologRawBucket2F2DAEE8",
+          "PhotologRawBucketyasuv228F0992E",
           "Arn"
          ]
         },
@@ -69,7 +69,7 @@
           [
            {
             "Fn::GetAtt": [
-             "PhotologRawBucket2F2DAEE8",
+             "PhotologRawBucketyasuv228F0992E",
              "Arn"
             ]
            },
@@ -84,10 +84,10 @@
     }
    },
    "Metadata": {
-    "aws:cdk:path": "InfraStack/PhotologRawBucket/Policy/Resource"
+    "aws:cdk:path": "InfraStack/PhotologRawBucket-yasu-v2/Policy/Resource"
    }
   },
-  "PhotologRawBucketAutoDeleteObjectsCustomResourceFF17E73B": {
+  "PhotologRawBucketyasuv2AutoDeleteObjectsCustomResourceF48B4906": {
    "Type": "Custom::S3AutoDeleteObjects",
    "Properties": {
     "ServiceToken": {
@@ -97,16 +97,16 @@
      ]
     },
     "BucketName": {
-     "Ref": "PhotologRawBucket2F2DAEE8"
+     "Ref": "PhotologRawBucketyasuv228F0992E"
     }
    },
    "DependsOn": [
-    "PhotologRawBucketPolicyC758DC13"
+    "PhotologRawBucketyasuv2Policy685581FD"
    ],
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete",
    "Metadata": {
-    "aws:cdk:path": "InfraStack/PhotologRawBucket/AutoDeleteObjectsCustomResource/Default"
+    "aws:cdk:path": "InfraStack/PhotologRawBucket-yasu-v2/AutoDeleteObjectsCustomResource/Default"
    }
   },
   "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092": {
@@ -159,7 +159,7 @@
       [
        "Lambda function for auto-deleting objects in ",
        {
-        "Ref": "PhotologRawBucket2F2DAEE8"
+        "Ref": "PhotologRawBucketyasuv228F0992E"
        },
        " S3 bucket."
       ]
@@ -175,10 +175,165 @@
     "aws:asset:property": "Code"
    }
   },
+  "PhotologRawBucketmeguv2DD497B79": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketName": "photolog-prod-s3-original-megu",
+    "Tags": [
+     {
+      "Key": "aws-cdk:auto-delete-objects",
+      "Value": "true"
+     },
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Owner",
+      "Value": "yasu"
+     },
+     {
+      "Key": "Project",
+      "Value": "photolog"
+     }
+    ],
+    "VersioningConfiguration": {
+     "Status": "Enabled"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/PhotologRawBucket-megu-v2/Resource"
+   }
+  },
+  "PhotologRawBucketmeguv2Policy2EEAC3CE": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "PhotologRawBucketmeguv2DD497B79"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:DeleteObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:PutBucketPolicy"
+       ],
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::GetAtt": [
+          "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+          "Arn"
+         ]
+        }
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "PhotologRawBucketmeguv2DD497B79",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "PhotologRawBucketmeguv2DD497B79",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/PhotologRawBucket-megu-v2/Policy/Resource"
+   }
+  },
+  "PhotologRawBucketmeguv2AutoDeleteObjectsCustomResource61F1C922": {
+   "Type": "Custom::S3AutoDeleteObjects",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
+      "Arn"
+     ]
+    },
+    "BucketName": {
+     "Ref": "PhotologRawBucketmeguv2DD497B79"
+    }
+   },
+   "DependsOn": [
+    "PhotologRawBucketmeguv2Policy2EEAC3CE"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/PhotologRawBucket-megu-v2/AutoDeleteObjectsCustomResource/Default"
+   }
+  },
+  "PhotologMetadataTable13691B3C": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "UserID",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "ShootingDate",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "UserID",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "ShootingDate",
+      "KeyType": "RANGE"
+     }
+    ],
+    "TableName": "photolog-prod-dynamodb-metadata-yasu",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Owner",
+      "Value": "yasu"
+     },
+     {
+      "Key": "Project",
+      "Value": "photolog"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/PhotologMetadataTable/Resource"
+   }
+  },
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/12NwWrDMBBEvyV7DGsVx4WAb016bk1yNKXI8jZVbEugXTkY438vWAmEngZm3szs1K7Yq3yjb5yZtst626j5LNp0qG/8zYWaD9F0JPUMOop/p56EPpsrGWEoJURCaFbiQw8EJWwBIdDgR91XvrdmghJaYgl+AoSRAlvvqE3d5QuPPy49YJJUquf76rr4jKV8wWNk8cOJ2MdgqIYtrNDD+JdXwY+2pXDQTPjGTHIWfbHusmA1ya93L4XKc5W/bq5sbRaiEzuQOiX9A2lVYIQmAQAA"
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/7WQy27CMBBFv4VZIuMqUKlSdkBZVW3ThC6qCCEnnlJDYiN7Aoqs/HuVuA/UBbuu5qF77xx7yqezOx6NxNlNSnmYVKrgPiNRHpg4u613M+4XTXlAyj2Ihsw9Vkj4XOyxJAcx2QYZFIPiSdQIMYyBgcXanESVmEqVLcQg0ZE1LTA4oXXKaJTB27H/id2w5bsO4CyUYMr9V+qQ2F+/HC9cQd4x2WpRG1lwvxZFhbmHo7CkSBn9gC3EHvQvH7XHvs2gY+CMpeuKQlWV0rtHI/tVMn/bJqt0m65eXlfZ+uprqUf5+ZeAPeB1HVs2jkydojONLTEfro5hkHwv/2gSa05Kol0Ih2zuHFJGYqf0jl2mbDqWtPRh9M2MRxGPbkd7p9TENppUjTwN9RNQrp6sUAIAAA=="
    },
    "Metadata": {
     "aws:cdk:path": "InfraStack/CDKMetadata/Default"
