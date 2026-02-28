@@ -27,14 +27,14 @@ class InfraStack(Stack):
             versioned=True,  # 誤削除防止のためにバージョン管理を有効化
             removal_policy=RemovalPolicy.DESTROY, # 学習用なのでStack削除時にバケットも消す設定（本番はRETAIN推奨）
             auto_delete_objects=True, # バケット削除時に中身も自動削除する
-            bucket_name=f"photolog-prod-s3-original-yasu"
+            bucket_name=f"photolog-prod-s3-thumbnail-yasu"
         )
 
         bucket_megu = s3.Bucket(self, "PhotologRawBucket-megu-v2",
             versioned=True,  # 誤削除防止のためにバージョン管理を有効化
             removal_policy=RemovalPolicy.DESTROY, # 学習用なのでStack削除時にバケットも消す設定（本番はRETAIN推奨）
             auto_delete_objects=True, # バケット削除時に中身も自動削除する
-            bucket_name=f"photolog-prod-s3-original-megu"
+            bucket_name=f"photolog-prod-s3-thumbnail-megu"
         )
 
         # DynamoDBの定義

@@ -3,7 +3,7 @@
   "PhotologRawBucketyasuv228F0992E": {
    "Type": "AWS::S3::Bucket",
    "Properties": {
-    "BucketName": "photolog-prod-s3-original-yasu",
+    "BucketName": "photolog-prod-s3-thumbnail-yasu",
     "Tags": [
      {
       "Key": "aws-cdk:auto-delete-objects",
@@ -178,7 +178,7 @@
   "PhotologRawBucketmeguv2DD497B79": {
    "Type": "AWS::S3::Bucket",
    "Properties": {
-    "BucketName": "photolog-prod-s3-original-megu",
+    "BucketName": "photolog-prod-s3-thumbnail-megu",
     "Tags": [
      {
       "Key": "aws-cdk:auto-delete-objects",

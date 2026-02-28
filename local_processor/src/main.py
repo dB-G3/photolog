@@ -6,6 +6,7 @@ from pathlib import Path
 
 import picture
 import movie
+import upload
 
 
 TARGET_WIDTH = 800
@@ -20,6 +21,7 @@ if __name__ == "__main__":
     print(f"--- 探索開始: {INPUT_DIR} ---")
     
     input_path = Path(INPUT_DIR)
+    output_path = Path(OUTPUT_DIR)
     
     # rglobでサブフォルダ内も含めて対象ファイルを全検索
     for img_file in input_path.rglob("*"):
@@ -53,7 +55,17 @@ if __name__ == "__main__":
                 temp_dir.mkdir(parents=True, exist_ok=True)
                 save_path_pict = temp_dir / relative_path.name
                 
+                #ファイルの圧縮
                 img = picture.process_image(img_file, TARGET_WIDTH, TARGET_HEIGHT, save_path_pict, relative_path, OUTPUT_DIR)
+
+                #S3にアップロード
+                upload.upload_thumbnail_with_metadata(
+                    file_path=save_path_pict,
+                    bucket_name='photolog-prod-s3-thumbnail-yasu',
+                    object_name=str(save_path_pict.relative_to(output_path)),
+                    user_id='yasu',
+                    shooting_date=iso_date + '#' + str(save_path_pict.name),
+                    )
 
             elif img_file.suffix.lower() in [".mov"]:
                 meta = movie.get_video_metadata(img_file)
@@ -82,6 +94,22 @@ if __name__ == "__main__":
                 #print(save_path_video)
                 movie.extract_video_thumbnail(img_file, save_path_video_thumbnail.with_suffix(".jpg"), relative_path, 1.0)
                 movie.compress_video(img_file, save_path_video)
+
+                #S3にアップロード
+                upload.upload_thumbnail_with_metadata(
+                    file_path=save_path_video_thumbnail.with_suffix(".jpg"),
+                    bucket_name='photolog-prod-s3-thumbnail-yasu',
+                    object_name=str(save_path_video_thumbnail.relative_to(output_path))+'.jpg',
+                    user_id='yasu',
+                    shooting_date=iso_date + '#' + str(save_path_video_thumbnail.name),
+                    )
+                upload.upload_thumbnail_with_metadata(
+                    file_path=save_path_video,
+                    bucket_name='photolog-prod-s3-thumbnail-yasu',
+                    object_name=str(save_path_video.relative_to(output_path)),
+                    user_id='yasu',
+                    shooting_date=iso_date + '#' + str(save_path_video.name),
+                    )
             
             else:
                 print("処理スキップ：" + str(relative_path))
@@ -103,3 +131,4 @@ if __name__ == "__main__":
             # フォルダをZipに圧縮
             zip_path = os.path.join(OUTPUT_ZIP_DIR, date_dir.name)
             zip_file = util.zip_directory(zip_path, date_dir)
+    print('Zip圧縮完了')
