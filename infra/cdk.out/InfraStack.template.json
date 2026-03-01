@@ -330,10 +330,137 @@
     "aws:cdk:path": "InfraStack/PhotologMetadataTable/Resource"
    }
   },
+  "S3MetaHandlerServiceRoleA10E255F": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Owner",
+      "Value": "yasu"
+     },
+     {
+      "Key": "Project",
+      "Value": "photolog"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/S3MetaHandler/ServiceRole/Resource"
+   }
+  },
+  "S3MetaHandler6882543C": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "246d511393ebda9f773e23c5da9dee7ae1fb2e98a82e68a2a155434aaf0f1b2a.zip"
+    },
+    "Description": "S3に画像がアップロードされた際にメタデータをDynamoDBに登録するLambda",
+    "Handler": "handler.lambda_handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "S3MetaHandlerServiceRoleA10E255F",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Owner",
+      "Value": "yasu"
+     },
+     {
+      "Key": "Project",
+      "Value": "photolog"
+     }
+    ]
+   },
+   "DependsOn": [
+    "S3MetaHandlerServiceRoleA10E255F"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/S3MetaHandler/Resource",
+    "aws:asset:path": "asset.246d511393ebda9f773e23c5da9dee7ae1fb2e98a82e68a2a155434aaf0f1b2a",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "S3MetaHandlerLogGroup8DD698C5": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "S3MetaHandler6882543C"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 731,
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Owner",
+      "Value": "yasu"
+     },
+     {
+      "Key": "Project",
+      "Value": "photolog"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/S3MetaHandler/LogGroup/Resource"
+   }
+  },
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/7WQy27CMBBFv4VZIuPyWmUHlFXVNk3ooooQcuIpNTg2siegyMq/V0n6QF2w62oeuvfOsad8Oh/z8UBc/KiQx5FWOQ8pieLIxMXvgp/xsKyKI1IWQFRk71Ej4XN+wII8ROQqZJB3iidRIkQwBAYOS3sWOrZaFTVEINGTszUwOKPzyhqUvbdh/xO7Zat304OzvvSmLHyldont9evxytXLGyZrI0orcx42IteYBTgJR4qUNQ9YQxTA/PJRfWrbFBoG3jq6rciV1srsH61sV/HibRevk12yfnldp5ubr6UW5edfeuwOr2nYqvJkywS9rVyBWXd1CJ3ke/lHEzt7VhLdUnhkC++RUhJ7ZfbsOmXbsLimD2vuZnwy4ZP54OCVGrnKkCqRJ339BBQ/ORNQAgAA"
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/7VSO2/bMBD+LeEY0GwcZ9Imp26HvlQ7HQrBME7kVWFMkQJJORAI/veCopw6GbJ1uuPhe92Bt+z27obdXMGzW3BxXCjZsLDzwI8Unt0huBUL64Ef0deBwODNR1To8UfzhNw7Ung7ICXNhPgOHZKCXBNKLHbmBKoySvKRFESg89aMhJITWieNRpG5kf4f2T29/6NzcJpLJtVhVp0Uk/vl84KV4TN3DQ4jFaOGzoiGhQdoFNaB9GC99NLoLziSIhD9L6of+9TuSKTEGevfRzRSKanbb0akUVX+PlSb7WG7+flrs3t4d3GforycKG8wxYtUQdcIYOHToHkKWYfE41b26TWn4NkytY+ghUJ7vvWgvXwle9aJVELHwtZMNwDnhg7Felqvt1Jz2YMqOTeD9rNWxiRCyV+8IyUdaGhRTGtJdKSow6vZWNoZu88RkkSkbnUA59A7VqZClWkdC19N+9maoa8DUXP75i5nRIz0fnDedFt0ZrAc6ynlNcke8/ANprLmJAXa9Bfo5Lvz0Erd0kuVfaTV6B+N/rBiyyVb3l09OSkX8zHZNte/RgHdrHYDAAA="
    },
    "Metadata": {
     "aws:cdk:path": "InfraStack/CDKMetadata/Default"

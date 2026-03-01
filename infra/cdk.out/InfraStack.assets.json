@@ -15,16 +15,30 @@
         }
       }
     },
-    "b6238da31e8c7d91e2c2705812fbd0a0f3b59926c2d40cc9292cacb35c9493ba": {
+    "246d511393ebda9f773e23c5da9dee7ae1fb2e98a82e68a2a155434aaf0f1b2a": {
+      "displayName": "S3MetaHandler/Code",
+      "source": {
+        "path": "asset.246d511393ebda9f773e23c5da9dee7ae1fb2e98a82e68a2a155434aaf0f1b2a",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "current_account-current_region-59efb666": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "246d511393ebda9f773e23c5da9dee7ae1fb2e98a82e68a2a155434aaf0f1b2a.zip",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    },
+    "67a8eca3a3e5ff3eb868b08a42d9e00a724fb07010c224b1711e999bf7c9e514": {
       "displayName": "InfraStack Template",
       "source": {
         "path": "InfraStack.template.json",
         "packaging": "file"
       },
       "destinations": {
-        "current_account-current_region-784afd47": {
+        "current_account-current_region-b96199e7": {
           "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
-          "objectKey": "b6238da31e8c7d91e2c2705812fbd0a0f3b59926c2d40cc9292cacb35c9493ba.json",
+          "objectKey": "67a8eca3a3e5ff3eb868b08a42d9e00a724fb07010c224b1711e999bf7c9e514.json",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
         }
       }

@@ -2,6 +2,7 @@
   "folders": [
     { "path": "infra" },
     { "path": "local_processor" }
+    { "path": "lambda_S3meta" }
   ],
   "settings": {
     "python.analysis.exclude": ["**/node_modules", "**/__pycache__", "**/.venv"],

@@ -3,6 +3,7 @@ from aws_cdk import (
     Stack,
     aws_s3 as s3,
     aws_dynamodb as dynamodb,
+    aws_lambda as _lambda,
     RemovalPolicy,
     # aws_sqs as sqs,
 )
@@ -54,4 +55,13 @@ class InfraStack(Stack):
             # 開発用設定
             billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST, # 使った分だけ課金
             removal_policy=RemovalPolicy.DESTROY             # Stack削除時にテーブルも消す
+        )
+
+        # Lambda関数の定義
+        meta_lambda = _lambda.Function(
+            self, "S3MetaHandler",
+            runtime=_lambda.Runtime.PYTHON_3_12,
+            handler="handler.lambda_handler",
+            code=_lambda.Code.from_asset("../lambda_S3meta"),
+            description="S3に画像がアップロードされた際にメタデータをDynamoDBに登録するLambda",
         )
