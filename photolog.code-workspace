@@ -1,0 +1,11 @@
+{
+  "folders": [
+    { "path": "infra" },
+    { "path": "local_processor" }
+  ],
+  "settings": {
+    "python.analysis.exclude": ["**/node_modules", "**/__pycache__", "**/.venv"],
+    "python.venvPath": "~/.virtualenvs", 
+    "python.terminal.activateEnvInCurrentTerminal": true
+  }
+}

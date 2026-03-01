@@ -1,12 +1,15 @@
 {
-    "name": "Photolog-Infra",
+    "name": "Photolog",
     "build": {
         "dockerfile": "Dockerfile",
         "context": "."
     },
-    // infra フォルダをコンテナのルートとして認識させる
-    "workspaceFolder": "/workspaces/infra",
-    "runArgs": ["--env-file", ".env"],
+    // photolog フォルダをコンテナのルートとして認識させる
+    "workspaceFolder": "/workspaces/photolog",
+    "runArgs": [
+        "--env-file", ".env",
+        "--label", "my-app=photolog"
+    ],
     "customizations": {
         "vscode": {
             "extensions": [
