@@ -6,7 +6,7 @@ import os
 # AWS SDKの準備（ハンドラーの外で定義するのがベストプラクティス）
 dynamodb = boto3.resource('dynamodb')
 s3_client = boto3.client('s3')
-# 環境変数からテーブル名を取得
+# 環境変数からテーブル名を取得（後ほどCDKで設定します）
 table_name = os.environ.get('TABLE_NAME')
 table = dynamodb.Table(table_name)
 
@@ -22,9 +22,10 @@ def lambda_handler(event, context):
         
         print(f"Processing image: {key} from bucket: {bucket}")
 
+        # 1. S3からオブジェクトのメタデータを取得する
         try:
             response = s3_client.head_object(Bucket=bucket, Key=key)
-            # S3からオブジェクトのメタデータを取得する
+            # ユーザー定義メタデータは 'Metadata' キーの中に小文字で格納される
             metadata = response.get('Metadata', {})
             
             # x-amz-meta-shootingdate -> metadata['shootingdate']
@@ -36,7 +37,7 @@ def lambda_handler(event, context):
                 print(f"Error: Metadata missing for {key}. UserID: {user_id}, Date: {shooting_date}")
                 continue
 
-            # DynamoDBへ書き込み
+            # 2. DynamoDBへ書き込み
             table.put_item(
                 Item={
                     'UserID': user_id,          # パーティションキー

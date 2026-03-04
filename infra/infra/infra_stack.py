@@ -2,6 +2,7 @@ from aws_cdk import (
     # Duration,
     Stack,
     aws_s3 as s3,
+    aws_s3_notifications as s3n,
     aws_dynamodb as dynamodb,
     aws_lambda as _lambda,
     RemovalPolicy,
@@ -64,4 +65,15 @@ class InfraStack(Stack):
             handler="handler.lambda_handler",
             code=_lambda.Code.from_asset("../lambda_S3meta"),
             description="S3に画像がアップロードされた際にメタデータをDynamoDBに登録するLambda",
+            environment={
+                "TABLE_NAME": table.table_name # テーブル名を環境変数で渡す
+            },
+        )
+        table.grant_write_data(meta_lambda) # LambdaにDynamoDB書き込み権限を付与
+        bucket_yasu.grant_read(meta_lambda) # LambdaにS3読み取り権限を付与
+
+        # S3イベント通知を設定
+        bucket_yasu.add_event_notification(
+            s3.EventType.OBJECT_CREATED,
+            s3n.LambdaDestination(meta_lambda)
         )

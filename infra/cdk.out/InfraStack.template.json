@@ -109,6 +109,69 @@
     "aws:cdk:path": "InfraStack/PhotologRawBucket-yasu-v2/AutoDeleteObjectsCustomResource/Default"
    }
   },
+  "PhotologRawBucketyasuv2Notifications0214FB28": {
+   "Type": "Custom::S3BucketNotifications",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691",
+      "Arn"
+     ]
+    },
+    "BucketName": {
+     "Ref": "PhotologRawBucketyasuv228F0992E"
+    },
+    "NotificationConfiguration": {
+     "LambdaFunctionConfigurations": [
+      {
+       "Events": [
+        "s3:ObjectCreated:*"
+       ],
+       "LambdaFunctionArn": {
+        "Fn::GetAtt": [
+         "S3MetaHandler6882543C",
+         "Arn"
+        ]
+       }
+      }
+     ]
+    },
+    "Managed": true,
+    "SkipDestinationValidation": false
+   },
+   "DependsOn": [
+    "PhotologRawBucketyasuv2AllowBucketNotificationsToInfraStackS3MetaHandler486B3A9630557D7F",
+    "PhotologRawBucketyasuv2Policy685581FD"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/PhotologRawBucket-yasu-v2/Notifications/Resource"
+   }
+  },
+  "PhotologRawBucketyasuv2AllowBucketNotificationsToInfraStackS3MetaHandler486B3A9630557D7F": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "S3MetaHandler6882543C",
+      "Arn"
+     ]
+    },
+    "Principal": "s3.amazonaws.com",
+    "SourceAccount": {
+     "Ref": "AWS::AccountId"
+    },
+    "SourceArn": {
+     "Fn::GetAtt": [
+      "PhotologRawBucketyasuv228F0992E",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/PhotologRawBucket-yasu-v2/AllowBucketNotificationsToInfraStackS3MetaHandler486B3A96"
+   }
+  },
   "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092": {
    "Type": "AWS::IAM::Role",
    "Properties": {
@@ -378,6 +441,71 @@
     "aws:cdk:path": "InfraStack/S3MetaHandler/ServiceRole/Resource"
    }
   },
+  "S3MetaHandlerServiceRoleDefaultPolicy163E0A9F": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchWriteItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "PhotologMetadataTable13691B3C",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": [
+        "s3:GetBucket*",
+        "s3:GetObject*",
+        "s3:List*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "PhotologRawBucketyasuv228F0992E",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "PhotologRawBucketyasuv228F0992E",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "S3MetaHandlerServiceRoleDefaultPolicy163E0A9F",
+    "Roles": [
+     {
+      "Ref": "S3MetaHandlerServiceRoleA10E255F"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/S3MetaHandler/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
   "S3MetaHandler6882543C": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
@@ -385,9 +513,16 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "246d511393ebda9f773e23c5da9dee7ae1fb2e98a82e68a2a155434aaf0f1b2a.zip"
+     "S3Key": "dd516f26baac69d6e85b7f30056a88c3de4fc3a362dce5f5289231e9d1f06333.zip"
     },
     "Description": "S3に画像がアップロードされた際にメタデータをDynamoDBに登録するLambda",
+    "Environment": {
+     "Variables": {
+      "TABLE_NAME": {
+       "Ref": "PhotologMetadataTable13691B3C"
+      }
+     }
+    },
     "Handler": "handler.lambda_handler",
     "Role": {
      "Fn::GetAtt": [
@@ -412,11 +547,12 @@
     ]
    },
    "DependsOn": [
+    "S3MetaHandlerServiceRoleDefaultPolicy163E0A9F",
     "S3MetaHandlerServiceRoleA10E255F"
    ],
    "Metadata": {
     "aws:cdk:path": "InfraStack/S3MetaHandler/Resource",
-    "aws:asset:path": "asset.246d511393ebda9f773e23c5da9dee7ae1fb2e98a82e68a2a155434aaf0f1b2a",
+    "aws:asset:path": "asset.dd516f26baac69d6e85b7f30056a88c3de4fc3a362dce5f5289231e9d1f06333",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -457,10 +593,126 @@
     "aws:cdk:path": "InfraStack/S3MetaHandler/LogGroup/Resource"
    }
   },
+  "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Owner",
+      "Value": "yasu"
+     },
+     {
+      "Key": "Project",
+      "Value": "photolog"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/Resource"
+   }
+  },
+  "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "s3:PutBucketNotification",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "PhotologRawBucketyasuv228F0992E",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36",
+    "Roles": [
+     {
+      "Ref": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/DefaultPolicy/Resource"
+   }
+  },
+  "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Description": "AWS CloudFormation handler for \"Custom::S3BucketNotifications\" resources (@aws-cdk/aws-s3)",
+    "Code": {
+     "ZipFile": "import boto3  # type: ignore\nimport json\nimport logging\nimport urllib.request\n\ns3 = boto3.client(\"s3\")\n\nEVENTBRIDGE_CONFIGURATION = 'EventBridgeConfiguration'\nCONFIGURATION_TYPES = [\"TopicConfigurations\", \"QueueConfigurations\", \"LambdaFunctionConfigurations\"]\n\ndef handler(event: dict, context):\n  response_status = \"SUCCESS\"\n  error_message = \"\"\n  try:\n    props = event[\"ResourceProperties\"]\n    notification_configuration = props[\"NotificationConfiguration\"]\n    managed = props.get('Managed', 'true').lower() == 'true'\n    skipDestinationValidation = props.get('SkipDestinationValidation', 'false').lower() == 'true'\n    stack_id = event['StackId']\n    old = event.get(\"OldResourceProperties\", {}).get(\"NotificationConfiguration\", {})\n    if managed:\n      config = handle_managed(event[\"RequestType\"], notification_configuration)\n    else:\n      config = handle_unmanaged(props[\"BucketName\"], stack_id, event[\"RequestType\"], notification_configuration, old)\n    s3.put_bucket_notification_configuration(Bucket=props[\"BucketName\"], NotificationConfiguration=config, SkipDestinationValidation=skipDestinationValidation)\n  except Exception as e:\n    logging.exception(\"Failed to put bucket notification configuration\")\n    response_status = \"FAILED\"\n    error_message = f\"Error: {str(e)}. \"\n  finally:\n    submit_response(event, context, response_status, error_message)\n\ndef handle_managed(request_type, notification_configuration):\n  if request_type == 'Delete':\n    return {}\n  return notification_configuration\n\ndef handle_unmanaged(bucket, stack_id, request_type, notification_configuration, old):\n  def get_id(n):\n    n['Id'] = ''\n    sorted_notifications = sort_filter_rules(n)\n    strToHash=json.dumps(sorted_notifications, sort_keys=True).replace('\"Name\": \"prefix\"', '\"Name\": \"Prefix\"').replace('\"Name\": \"suffix\"', '\"Name\": \"Suffix\"')\n    return f\"{stack_id}-{hash(strToHash)}\"\n  def with_id(n):\n    n['Id'] = get_id(n)\n    return n\n\n  external_notifications = {}\n  existing_notifications = s3.get_bucket_notification_configuration(Bucket=bucket)\n  for t in CONFIGURATION_TYPES:\n    if request_type == 'Update':\n        old_incoming_ids = [get_id(n) for n in old.get(t, [])]\n        external_notifications[t] = [n for n in existing_notifications.get(t, []) if not get_id(n) in old_incoming_ids]      \n    elif request_type == 'Delete':\n        external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'].startswith(f\"{stack_id}-\")]\n    elif request_type == 'Create':\n        external_notifications[t] = [n for n in existing_notifications.get(t, [])]\n  if EVENTBRIDGE_CONFIGURATION in existing_notifications:\n    external_notifications[EVENTBRIDGE_CONFIGURATION] = existing_notifications[EVENTBRIDGE_CONFIGURATION]\n\n  if request_type == 'Delete':\n    return external_notifications\n\n  notifications = {}\n  for t in CONFIGURATION_TYPES:\n    external = external_notifications.get(t, [])\n    incoming = [with_id(n) for n in notification_configuration.get(t, [])]\n    notifications[t] = external + incoming\n\n  if EVENTBRIDGE_CONFIGURATION in notification_configuration:\n    notifications[EVENTBRIDGE_CONFIGURATION] = notification_configuration[EVENTBRIDGE_CONFIGURATION]\n  elif EVENTBRIDGE_CONFIGURATION in external_notifications:\n    notifications[EVENTBRIDGE_CONFIGURATION] = external_notifications[EVENTBRIDGE_CONFIGURATION]\n\n  return notifications\n\ndef submit_response(event: dict, context, response_status: str, error_message: str):\n  response_body = json.dumps(\n    {\n      \"Status\": response_status,\n      \"Reason\": f\"{error_message}See the details in CloudWatch Log Stream: {context.log_stream_name}\",\n      \"PhysicalResourceId\": event.get(\"PhysicalResourceId\") or event[\"LogicalResourceId\"],\n      \"StackId\": event[\"StackId\"],\n      \"RequestId\": event[\"RequestId\"],\n      \"LogicalResourceId\": event[\"LogicalResourceId\"],\n      \"NoEcho\": False,\n    }\n  ).encode(\"utf-8\")\n  headers = {\"content-type\": \"\", \"content-length\": str(len(response_body))}\n  try:\n    req = urllib.request.Request(url=event[\"ResponseURL\"], headers=headers, data=response_body, method=\"PUT\")\n    with urllib.request.urlopen(req) as response:\n      print(response.read().decode(\"utf-8\"))\n    print(\"Status code: \" + response.reason)\n  except Exception as e:\n      print(\"send(..) failed executing request.urlopen(..): \" + str(e))\n\ndef sort_filter_rules(json_obj):\n  if not isinstance(json_obj, dict):\n      return json_obj\n  for key, value in json_obj.items():\n      if isinstance(value, dict):\n          json_obj[key] = sort_filter_rules(value)\n      elif isinstance(value, list):\n          json_obj[key] = [sort_filter_rules(item) for item in value]\n  if \"Filter\" in json_obj and \"Key\" in json_obj[\"Filter\"] and \"FilterRules\" in json_obj[\"Filter\"][\"Key\"]:\n      filter_rules = json_obj[\"Filter\"][\"Key\"][\"FilterRules\"]\n      sorted_filter_rules = sorted(filter_rules, key=lambda x: x[\"Name\"])\n      json_obj[\"Filter\"][\"Key\"][\"FilterRules\"] = sorted_filter_rules\n  return json_obj"
+    },
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.13",
+    "Timeout": 300,
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Owner",
+      "Value": "yasu"
+     },
+     {
+      "Key": "Project",
+      "Value": "photolog"
+     }
+    ]
+   },
+   "DependsOn": [
+    "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36",
+    "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Resource"
+   }
+  },
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/7VSO2/bMBD+LeEY0GwcZ9Imp26HvlQ7HQrBME7kVWFMkQJJORAI/veCopw6GbJ1uuPhe92Bt+z27obdXMGzW3BxXCjZsLDzwI8Unt0huBUL64Ef0deBwODNR1To8UfzhNw7Ung7ICXNhPgOHZKCXBNKLHbmBKoySvKRFESg89aMhJITWieNRpG5kf4f2T29/6NzcJpLJtVhVp0Uk/vl84KV4TN3DQ4jFaOGzoiGhQdoFNaB9GC99NLoLziSIhD9L6of+9TuSKTEGevfRzRSKanbb0akUVX+PlSb7WG7+flrs3t4d3GforycKG8wxYtUQdcIYOHToHkKWYfE41b26TWn4NkytY+ghUJ7vvWgvXwle9aJVELHwtZMNwDnhg7Felqvt1Jz2YMqOTeD9rNWxiRCyV+8IyUdaGhRTGtJdKSow6vZWNoZu88RkkSkbnUA59A7VqZClWkdC19N+9maoa8DUXP75i5nRIz0fnDedFt0ZrAc6ynlNcke8/ANprLmJAXa9Bfo5Lvz0Erd0kuVfaTV6B+N/rBiyyVb3l09OSkX8zHZNte/RgHdrHYDAAA="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/8WUXW/bIBSGf0u5rAhrml7lLsmyadq6eUl6MVlRhOHUocEQAU5lIf/3CYwzr50yadq0K/D5eM9zDphbcnt3Q26u6LMdMX4YSVEQv3aUHTB9tjtvJ8TPa3YAl3tEa6ffggQHX4onYM6iqTM1YFTEiM+0AjRF1wgjA5U+UZlpKViDpoiDdUY3CKMTGCu0At7ltvjfyG7x4lF14LhbuqTcJ9WoGKoPPwdZXXjKnVMLLZa0KjglfvGoMjCVsKEiflcr5oRWuQ84zIhj+ErAoE7CaFWBcsnCNO+72VPFJZi+t1o5kTqNU+F8OczOY9Q12naUfdkW80bRSvOC+A0tJOQeHalxIjg/QoOmHqkfE3TNMWzXqMXIauMuRxRCSqHK+445m33bZcvVbrX8+rBcby6ehwso55PrkCNeiwWtiF/pSEqtrSvg8whxNEIxcaRyxpiuzxPrYkLCjJ1H22JUUUVL4LG4AIumuf/J1sxMit2meW501pfokXOfvM5Rtv+gpFBw9sVp/9Z5WfePG0za98OO/kuP8ewCHU6/UIDuEzY6eF7pvDZzvnbUQbjLdoD0K/Pf0o/gHXOL7WRHrQVnySwsWOrSEv9Jl++Nro+5RzJtX1zaPqJt8aK2TlcrsLo2DM7/YxxPMr6IyYw+CQ4mvB841l07WgpV4qHKtsVZ4/ZavZmQ8ZiM766erBCj9CCQVbd+B81oiGyqBQAA"
    },
    "Metadata": {
     "aws:cdk:path": "InfraStack/CDKMetadata/Default"
