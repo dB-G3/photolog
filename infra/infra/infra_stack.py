@@ -8,6 +8,10 @@ from aws_cdk import (
     RemovalPolicy,
     # aws_sqs as sqs,
 )
+# alpha 系はこっちで書く
+import aws_cdk.aws_apigatewayv2_alpha as apigwv2
+import aws_cdk.aws_apigatewayv2_integrations_alpha as integrations
+
 from constructs import Construct
 import os
 
@@ -77,4 +81,39 @@ class InfraStack(Stack):
         bucket_yasu.add_event_notification(
             s3.EventType.OBJECT_CREATED,
             s3n.LambdaDestination(meta_lambda)
+        )
+
+        # API用Lambda関数
+        api_handler = _lambda.Function(
+            self, "ApiGetPhotosHandler",
+            runtime=_lambda.Runtime.PYTHON_3_12,
+            function_name="photolog-prod-lambda-apiGetPhotos-yasu",
+            code=_lambda.Code.from_asset("../lambda"), 
+            handler="get_photos_api.handler",
+            description="写真を取得するAPI",
+            environment={
+                "TABLE_NAME": table.table_name, # テーブル名を環境変数で渡す
+                "THUMBNAIL_BUCKET_NAME": bucket_yasu.bucket_name # サムネイルバケット名を環境変数で渡す
+            },
+        )
+        table.grant_read_data(api_handler) # LambdaにDynamoDB読み込み権限を付与
+        bucket_yasu.grant_read(api_handler) # LambdaにS3読み取り権限を付与
+
+        # API Gateway
+        http_api = apigwv2.HttpApi(
+            self, "ApiGateway",
+            api_name="photolog-prod-apigateway-apigateway-yasu",
+            cors_preflight=apigwv2.CorsPreflightOptions(
+                allow_origins=["*"], # 開発時は全て許可。ブラウザからのアクセスを拒否されないため。
+                allow_methods=[apigwv2.CorsHttpMethod.GET],
+            )
+        )
+        # 作成済みの api_handler を APIに紐づける
+        http_api.add_routes(
+            path="/photos",
+            methods=[apigwv2.HttpMethod.GET],
+            integration=integrations.HttpLambdaIntegration(
+                "GetPhotosIntegration",
+                api_handler
+            )
         )

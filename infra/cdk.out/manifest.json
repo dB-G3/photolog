@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/4b1260de0bdc9c42a7f581f8a311d2d4e1710a1f2ff83d5b95b3d6f8246a5a7f.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/5f8ed2cb4337d9f73906afdf61a9d2098f2ae41b2ee5433412b84c5609904cf3.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -417,6 +417,201 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691"
+          }
+        ],
+        "/InfraStack/ApiGetPhotosHandler": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "description": "*",
+              "environment": "*",
+              "functionName": "*",
+              "code": "*",
+              "handler": "*",
+              "runtime": "*"
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addEnvironment": [
+                "*",
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addEnvironment": [
+                "*",
+                "*"
+              ]
+            }
+          }
+        ],
+        "/InfraStack/ApiGetPhotosHandler/ServiceRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "assumedBy": {
+                "principalAccount": "*",
+                "assumeRoleAction": "*"
+              },
+              "managedPolicies": [
+                {
+                  "managedPolicyArn": "*"
+                }
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          }
+        ],
+        "/InfraStack/ApiGetPhotosHandler/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiGetPhotosHandlerServiceRole43946E15"
+          }
+        ],
+        "/InfraStack/ApiGetPhotosHandler/ServiceRole/DefaultPolicy": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          }
+        ],
+        "/InfraStack/ApiGetPhotosHandler/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiGetPhotosHandlerServiceRoleDefaultPolicyBC42A566"
+          }
+        ],
+        "/InfraStack/ApiGetPhotosHandler/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiGetPhotosHandler23BA4A45"
+          }
+        ],
+        "/InfraStack/ApiGetPhotosHandler/LogGroup": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "logGroupName": "*"
+            }
+          }
+        ],
+        "/InfraStack/ApiGetPhotosHandler/LogGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiGetPhotosHandlerLogGroup7ADA7FC0"
+          }
+        ],
+        "/InfraStack/ApiGateway/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiGateway11E7F47B"
+          }
+        ],
+        "/InfraStack/ApiGateway/DefaultStage/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiGatewayDefaultStageAB6C063E"
+          }
+        ],
+        "/InfraStack/ApiGateway/GET--photos/GetPhotosIntegration/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiGatewayGETphotosGetPhotosIntegration7CAFE3B2"
+          }
+        ],
+        "/InfraStack/ApiGateway/GET--photos/GetPhotosIntegration-Permission": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiGatewayGETphotosGetPhotosIntegrationPermissionF5B13CEA"
+          }
+        ],
+        "/InfraStack/ApiGateway/GET--photos/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiGatewayGETphotos9F91333C"
           }
         ],
         "/InfraStack/CDKMetadata/Default": [

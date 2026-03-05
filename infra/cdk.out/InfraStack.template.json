@@ -513,7 +513,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "7949d2f92444c9aee39b583c211163d8626abfb91595c04ae3bc57ace89dbfc9.zip"
+     "S3Key": "e76e489c0ce27d3e77c9aec20ca20ff0d103d5cfcd55817a9728f4910ca14783.zip"
     },
     "Description": "S3に画像がアップロードされた際にメタデータをDynamoDBに登録するLambda",
     "Environment": {
@@ -553,7 +553,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "InfraStack/S3MetaHandler/Resource",
-    "aws:asset:path": "asset.7949d2f92444c9aee39b583c211163d8626abfb91595c04ae3bc57ace89dbfc9",
+    "aws:asset:path": "asset.e76e489c0ce27d3e77c9aec20ca20ff0d103d5cfcd55817a9728f4910ca14783",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -710,10 +710,341 @@
     "aws:cdk:path": "InfraStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Resource"
    }
   },
+  "ApiGetPhotosHandlerServiceRole43946E15": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Owner",
+      "Value": "yasu"
+     },
+     {
+      "Key": "Project",
+      "Value": "photolog"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/ApiGetPhotosHandler/ServiceRole/Resource"
+   }
+  },
+  "ApiGetPhotosHandlerServiceRoleDefaultPolicyBC42A566": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:Scan"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "PhotologMetadataTable13691B3C",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": [
+        "s3:GetBucket*",
+        "s3:GetObject*",
+        "s3:List*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "PhotologRawBucketyasuv228F0992E",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "PhotologRawBucketyasuv228F0992E",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ApiGetPhotosHandlerServiceRoleDefaultPolicyBC42A566",
+    "Roles": [
+     {
+      "Ref": "ApiGetPhotosHandlerServiceRole43946E15"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/ApiGetPhotosHandler/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ApiGetPhotosHandler23BA4A45": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "e76e489c0ce27d3e77c9aec20ca20ff0d103d5cfcd55817a9728f4910ca14783.zip"
+    },
+    "Description": "写真を取得するAPI",
+    "Environment": {
+     "Variables": {
+      "TABLE_NAME": {
+       "Ref": "PhotologMetadataTable13691B3C"
+      },
+      "THUMBNAIL_BUCKET_NAME": {
+       "Ref": "PhotologRawBucketyasuv228F0992E"
+      }
+     }
+    },
+    "FunctionName": "photolog-prod-lambda-apiGetPhotos-yasu",
+    "Handler": "get_photos_api.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "ApiGetPhotosHandlerServiceRole43946E15",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Owner",
+      "Value": "yasu"
+     },
+     {
+      "Key": "Project",
+      "Value": "photolog"
+     }
+    ]
+   },
+   "DependsOn": [
+    "ApiGetPhotosHandlerServiceRoleDefaultPolicyBC42A566",
+    "ApiGetPhotosHandlerServiceRole43946E15"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/ApiGetPhotosHandler/Resource",
+    "aws:asset:path": "asset.e76e489c0ce27d3e77c9aec20ca20ff0d103d5cfcd55817a9728f4910ca14783",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ApiGetPhotosHandlerLogGroup7ADA7FC0": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "ApiGetPhotosHandler23BA4A45"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 731,
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Owner",
+      "Value": "yasu"
+     },
+     {
+      "Key": "Project",
+      "Value": "photolog"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/ApiGetPhotosHandler/LogGroup/Resource"
+   }
+  },
+  "ApiGateway11E7F47B": {
+   "Type": "AWS::ApiGatewayV2::Api",
+   "Properties": {
+    "CorsConfiguration": {
+     "AllowMethods": [
+      "GET"
+     ],
+     "AllowOrigins": [
+      "*"
+     ]
+    },
+    "Name": "photolog-prod-apigateway-apigateway-yasu",
+    "ProtocolType": "HTTP",
+    "Tags": {
+     "Environment": "dev",
+     "Owner": "yasu",
+     "Project": "photolog"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/ApiGateway/Resource"
+   }
+  },
+  "ApiGatewayDefaultStageAB6C063E": {
+   "Type": "AWS::ApiGatewayV2::Stage",
+   "Properties": {
+    "ApiId": {
+     "Ref": "ApiGateway11E7F47B"
+    },
+    "AutoDeploy": true,
+    "StageName": "$default",
+    "Tags": {
+     "Environment": "dev",
+     "Owner": "yasu",
+     "Project": "photolog"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/ApiGateway/DefaultStage/Resource"
+   }
+  },
+  "ApiGatewayGETphotosGetPhotosIntegration7CAFE3B2": {
+   "Type": "AWS::ApiGatewayV2::Integration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "ApiGateway11E7F47B"
+    },
+    "IntegrationType": "AWS_PROXY",
+    "IntegrationUri": {
+     "Fn::GetAtt": [
+      "ApiGetPhotosHandler23BA4A45",
+      "Arn"
+     ]
+    },
+    "PayloadFormatVersion": "2.0"
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/ApiGateway/GET--photos/GetPhotosIntegration/Resource"
+   }
+  },
+  "ApiGatewayGETphotosGetPhotosIntegrationPermissionF5B13CEA": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ApiGetPhotosHandler23BA4A45",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "ApiGateway11E7F47B"
+       },
+       "/*/*/photos"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/ApiGateway/GET--photos/GetPhotosIntegration-Permission"
+   }
+  },
+  "ApiGatewayGETphotos9F91333C": {
+   "Type": "AWS::ApiGatewayV2::Route",
+   "Properties": {
+    "ApiId": {
+     "Ref": "ApiGateway11E7F47B"
+    },
+    "AuthorizationType": "NONE",
+    "RouteKey": "GET /photos",
+    "Target": {
+     "Fn::Join": [
+      "",
+      [
+       "integrations/",
+       {
+        "Ref": "ApiGatewayGETphotosGetPhotosIntegration7CAFE3B2"
+       }
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/ApiGateway/GET--photos/Resource"
+   }
+  },
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/8WUUW/bIBDHP0t5rAhrmj7lLc2yadq6eUn6MFlRhOHi0GCIAKeykL/7BMaZ106ZNG3aE/juf3e/OzC35Pbuhtxc0Wc7YvwwkqIgfuUoO2D6bLfeToi/r9kBXO4RrZ1+CxIcfCmegDmLps7UgFERFZ9pBWiKrhFGBip9ojLTUrAGTREH64xuEEYnMFZoBbyLbfG/SbvB853qwHG3dEG5T1ljxlB9+DmI6uQp9p5aaLGkVcEp8fOdysBUwoaK+F2tmBNa5T7gMCOO4SsBgzoJo1UFyiXLLskHXTHN++2eKi7B9O3Wyokki4PifDFMmEfVNdp04D1Ji3mjaKV5QfyaFhJyj47UOBGcH6FBU4/Uj/KuOYbtCrUYWW3cZUUhpBSqfOiYs9m3bbZYbpeLr4+L1friEbmAcm67Q454LRa0In6pIym1tq6A30eIoxGKiSOVM8Z0fR5ipwkBM3aedotRRRUtgcfiAiya5v4nWzMzSbtJ81zrrC/RI+c+eZ2jbP9BSaHg7IvT/q3zct4/bjDlfhh29F96jGcX6HD6qwJ0H7DWwfMqz2sz5ytHHYS7bAdIvzL/rfwRvGNusZ1sqbXgLJmFBUtdWuI/6fK90fUx90im7YtL2yvaFs9r63S1BKtrw+D8P8bxJOMLTWb0SXAw4UnBse7K0VKoEg+zbFqcNW6v1ZsJGY/J+O7qyQoxSg8CWXbrd1Vdtu29BQAA"
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/91VUU/bMBD+LfgRuYYCT31aYd2GNrau7R6mCFWOfaQGx45spyiy8t+RHaeEAX2YhpD25Mvdd3ffd3bsE+JPzo7J8QG9tyPG70ZS5MQvHWV3mN7btbenxJ/X7A5c5hGtnf4IEhz8yG+BOYsmztSAUR4R32kJaIIOEUYGSr2lcq6lYA2aIA7WGd0gjLZgrNAKeJfb4rcpe40vblRHHHdLl5T5VDVWDN2Hn4OsDp5yz6mFFkta5pwSf3Gj5mBKYUNH/KlWzAmtMh/oMCOq8JUIg9oKo1UJyiXPTYIPVDHNe3NDFZdgerm1ciLB4qA4nw0LZhF1iK5D8F2bvx6MI+1n1GLeKFpqnhO/ormEzKOKGidC8Cs0aOKReuTmmiqYS9RiZLVx+xG5kFKo4qoTNJ/+Xs9ni/Vi9vPXbLnae3hcoLKbSUc50muxoCXxCx2ZUmvrEvh5JFEZoZioqJwypuvdhDtMSJiy3Va0GJVU0QJ4bC7Aoknmn/iaqUnYfp4rPe9b9JQzn6LOUba5VFIo2MV2W7E3uL/uXwtMta+Git5N43+/Ta9H49ENsnC67oLavtlKh8gzDs/dnC8ddRB+Zfuk7XP3P6v/1kRfdsd5daNqsT1dU2vBWTINC5a6sMR/08Vno+sq80gm8/GqwC85Y9E+rcW0EgV1cE+b7Ul8PKaVCIilowUE41I5KAwN57DbvtpB2+KL2jpdLsDq2jDY3agRkpx/YOZGbwUHE54rHDWEHkIVeFjlusXj8RkZj6isNpQcH3xIj/9RWIdsE8J/ca4KpMPasQ5W5BmtgYC2xfPGbbQ6OiXjMRmfHdxaIUbpMSGLbn0AZF7khncIAAA="
    },
    "Metadata": {
     "aws:cdk:path": "InfraStack/CDKMetadata/Default"
