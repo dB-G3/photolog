@@ -61,9 +61,10 @@ class InfraStack(Stack):
         # Lambda関数の定義
         meta_lambda = _lambda.Function(
             self, "S3MetaHandler",
+            function_name="photolog-prod-lambda-s3metaRegister-yasu",
             runtime=_lambda.Runtime.PYTHON_3_12,
-            handler="handler.lambda_handler",
-            code=_lambda.Code.from_asset("../lambda_S3meta"),
+            handler="S3handler.lambda_handler",
+            code=_lambda.Code.from_asset("../lambda"),
             description="S3に画像がアップロードされた際にメタデータをDynamoDBに登録するLambda",
             environment={
                 "TABLE_NAME": table.table_name # テーブル名を環境変数で渡す
