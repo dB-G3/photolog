@@ -3,6 +3,7 @@
     { "path": "infra" },
     { "path": "local_processor" }
     { "path": "lambda" }
+    { "path": "frontend" }
   ],
   "settings": {
     "python.analysis.exclude": ["**/node_modules", "**/__pycache__", "**/.venv"],

@@ -4,6 +4,22 @@
    "Type": "AWS::S3::Bucket",
    "Properties": {
     "BucketName": "photolog-prod-s3-thumbnail-yasu",
+    "CorsConfiguration": {
+     "CorsRules": [
+      {
+       "AllowedHeaders": [
+        "*"
+       ],
+       "AllowedMethods": [
+        "GET",
+        "HEAD"
+       ],
+       "AllowedOrigins": [
+        "*"
+       ]
+      }
+     ]
+    },
     "Tags": [
      {
       "Key": "aws-cdk:auto-delete-objects",
@@ -1044,7 +1060,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/91VUU/bMBD+LfgRuYYCT31aYd2GNrau7R6mCFWOfaQGx45spyiy8t+RHaeEAX2YhpD25Mvdd3ffd3bsE+JPzo7J8QG9tyPG70ZS5MQvHWV3mN7btbenxJ/X7A5c5hGtnf4IEhz8yG+BOYsmztSAUR4R32kJaIIOEUYGSr2lcq6lYA2aIA7WGd0gjLZgrNAKeJfb4rcpe40vblRHHHdLl5T5VDVWDN2Hn4OsDp5yz6mFFkta5pwSf3Gj5mBKYUNH/KlWzAmtMh/oMCOq8JUIg9oKo1UJyiXPTYIPVDHNe3NDFZdgerm1ciLB4qA4nw0LZhF1iK5D8F2bvx6MI+1n1GLeKFpqnhO/ormEzKOKGidC8Cs0aOKReuTmmiqYS9RiZLVx+xG5kFKo4qoTNJ/+Xs9ni/Vi9vPXbLnae3hcoLKbSUc50muxoCXxCx2ZUmvrEvh5JFEZoZioqJwypuvdhDtMSJiy3Va0GJVU0QJ4bC7Aoknmn/iaqUnYfp4rPe9b9JQzn6LOUba5VFIo2MV2W7E3uL/uXwtMta+Git5N43+/Ta9H49ENsnC67oLavtlKh8gzDs/dnC8ddRB+Zfuk7XP3P6v/1kRfdsd5daNqsT1dU2vBWTINC5a6sMR/08Vno+sq80gm8/GqwC85Y9E+rcW0EgV1cE+b7Ul8PKaVCIilowUE41I5KAwN57DbvtpB2+KL2jpdLsDq2jDY3agRkpx/YOZGbwUHE54rHDWEHkIVeFjlusXj8RkZj6isNpQcH3xIj/9RWIdsE8J/ca4KpMPasQ5W5BmtgYC2xfPGbbQ6OiXjMRmfHdxaIUbpMSGLbn0AZF7khncIAAA="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/91W30/bMBD+W/AjcjMKPPVppXSANkbXdg9TVVXX+EgNjh3ZTlFk5X+f7DglDKjQxIS0J1/uvrv77s4/cpy449Oj5OgAHkwvZfc9wdeJm1lI7yk8mJUzJ4k7K9N7tAtHoLTqHAVavFnfYWoNGVhdIiXrgPgOOZIBOSSUpEobMvAuQqgHZNdoN4p5FbkYzwkll+PhOVnS1n6jecalid5ReYnAUDfKekmJxlxtQUyU4GlFBoShsVpVhJItasOVRNYQqqkjwNhIaTMtBb4vERosh2QZsry5I28nv6SjW9n0nDZL47RwMWrk8fSz49XAo+8ZGKypgHzNIHGjWzlBnXPjM9IvpUwtV3LhPJ1U88J/RcIot1wrmaO0UXMb4U/mzFpxA5IJ1G25pbQ8wuI4xt2Ai24XPzT568bQ0rZHNWWVhFyxdeLmsBa4cKQAbbk3fsWKDByRj9xsVXhx5veLUdruR6y5EFxm101Bk+Gv1WQ8XU3HP36OZ/O9m8d6KrueNJQDvZpyyBM3VYEpGFPmyM4CiUJzmfICxDBNVbnrcIPxDsN0N4qakhwkZMhCco7Nse7qqqGO2LafczVpU7SUFy5arYV0cyUFl7iz7Uax17g/7l8XGGNfdyv6sBr/+zG9bg1b15dF43Xnq22TzZW3POPwXM3YzIJFf5TNk7TP1e8W/18TfVkd+tW0qqbmZAXGoDXJ0C9UqMwk7pvKLrQqi4UjIoqPVwV9SRmCtm41hYJnYPEBqu1xeDyGBfeImYUMvXAlLWYa/D5sxldarGs6Ko1V+RSNKnWKuxs1QKLyD8xEqy1nqP1zRUMNPgeXGe1GWda03z9N+j0QxQaSo4PP8b/lk1+7bCPCXVpbeNJ+bVh7KfAMUqeAuqaTym6U/HSS9PtJ//TgznDei49JMm3W3xFQ6NoyCQAA"
    },
    "Metadata": {
     "aws:cdk:path": "InfraStack/CDKMetadata/Default"
