@@ -529,7 +529,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "86d3b7da6815a33671e426648140608ce319f76e670fa66ed9d0fb4a7ed319bc.zip"
+     "S3Key": "fe9010280438250970ea1568480c14fccd0894d9f2b4e85f97682a19e2057f0f.zip"
     },
     "Description": "S3に画像がアップロードされた際にメタデータをDynamoDBに登録するLambda",
     "Environment": {
@@ -569,7 +569,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "InfraStack/S3MetaHandler/Resource",
-    "aws:asset:path": "asset.86d3b7da6815a33671e426648140608ce319f76e670fa66ed9d0fb4a7ed319bc",
+    "aws:asset:path": "asset.fe9010280438250970ea1568480c14fccd0894d9f2b4e85f97682a19e2057f0f",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -849,7 +849,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "86d3b7da6815a33671e426648140608ce319f76e670fa66ed9d0fb4a7ed319bc.zip"
+     "S3Key": "fe9010280438250970ea1568480c14fccd0894d9f2b4e85f97682a19e2057f0f.zip"
     },
     "Description": "写真を取得するAPI",
     "Environment": {
@@ -892,7 +892,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "InfraStack/ApiGetPhotosHandler/Resource",
-    "aws:asset:path": "asset.86d3b7da6815a33671e426648140608ce319f76e670fa66ed9d0fb4a7ed319bc",
+    "aws:asset:path": "asset.fe9010280438250970ea1568480c14fccd0894d9f2b4e85f97682a19e2057f0f",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1057,15 +1057,108 @@
     "aws:cdk:path": "InfraStack/ApiGateway/GET--photos/Resource"
    }
   },
+  "PhotologUserPoolD3DA7D95": {
+   "Type": "AWS::Cognito::UserPool",
+   "Properties": {
+    "AccountRecoverySetting": {
+     "RecoveryMechanisms": [
+      {
+       "Name": "verified_email",
+       "Priority": 1
+      }
+     ]
+    },
+    "AdminCreateUserConfig": {
+     "AllowAdminCreateUserOnly": true
+    },
+    "EmailVerificationMessage": "The verification code to your new account is {####}",
+    "EmailVerificationSubject": "Verify your new account",
+    "Policies": {
+     "PasswordPolicy": {
+      "MinimumLength": 12,
+      "RequireLowercase": true,
+      "RequireNumbers": true,
+      "RequireSymbols": true,
+      "RequireUppercase": true
+     }
+    },
+    "SmsVerificationMessage": "The verification code to your new account is {####}",
+    "UserPoolName": "photolog-prod-userPool-auth-yasu",
+    "UserPoolTags": {
+     "Environment": "dev",
+     "Owner": "yasu",
+     "Project": "photolog"
+    },
+    "VerificationMessageTemplate": {
+     "DefaultEmailOption": "CONFIRM_WITH_CODE",
+     "EmailMessage": "The verification code to your new account is {####}",
+     "EmailSubject": "Verify your new account",
+     "SmsMessage": "The verification code to your new account is {####}"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/PhotologUserPool/Resource"
+   }
+  },
+  "PhotologUserPoolPhotologAppClient2CE306BB": {
+   "Type": "AWS::Cognito::UserPoolClient",
+   "Properties": {
+    "AllowedOAuthFlows": [
+     "implicit",
+     "code"
+    ],
+    "AllowedOAuthFlowsUserPoolClient": true,
+    "AllowedOAuthScopes": [
+     "profile",
+     "phone",
+     "email",
+     "openid",
+     "aws.cognito.signin.user.admin"
+    ],
+    "CallbackURLs": [
+     "https://example.com"
+    ],
+    "ClientName": "photolog-prod-userPoolClient-reactApp-yasu",
+    "ExplicitAuthFlows": [
+     "ALLOW_USER_PASSWORD_AUTH",
+     "ALLOW_USER_SRP_AUTH",
+     "ALLOW_REFRESH_TOKEN_AUTH"
+    ],
+    "GenerateSecret": false,
+    "SupportedIdentityProviders": [
+     "COGNITO"
+    ],
+    "UserPoolId": {
+     "Ref": "PhotologUserPoolD3DA7D95"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/PhotologUserPool/PhotologAppClient/Resource"
+   }
+  },
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/91W30/bMBD+W/AjcjMKPPVppXSANkbXdg9TVVXX+EgNjh3ZTlFk5X+f7DglDKjQxIS0J1/uvrv77s4/cpy449Oj5OgAHkwvZfc9wdeJm1lI7yk8mJUzJ4k7K9N7tAtHoLTqHAVavFnfYWoNGVhdIiXrgPgOOZIBOSSUpEobMvAuQqgHZNdoN4p5FbkYzwkll+PhOVnS1n6jecalid5ReYnAUDfKekmJxlxtQUyU4GlFBoShsVpVhJItasOVRNYQqqkjwNhIaTMtBb4vERosh2QZsry5I28nv6SjW9n0nDZL47RwMWrk8fSz49XAo+8ZGKypgHzNIHGjWzlBnXPjM9IvpUwtV3LhPJ1U88J/RcIot1wrmaO0UXMb4U/mzFpxA5IJ1G25pbQ8wuI4xt2Ai24XPzT568bQ0rZHNWWVhFyxdeLmsBa4cKQAbbk3fsWKDByRj9xsVXhx5veLUdruR6y5EFxm101Bk+Gv1WQ8XU3HP36OZ/O9m8d6KrueNJQDvZpyyBM3VYEpGFPmyM4CiUJzmfICxDBNVbnrcIPxDsN0N4qakhwkZMhCco7Nse7qqqGO2LafczVpU7SUFy5arYV0cyUFl7iz7Uax17g/7l8XGGNfdyv6sBr/+zG9bg1b15dF43Xnq22TzZW3POPwXM3YzIJFf5TNk7TP1e8W/18TfVkd+tW0qqbmZAXGoDXJ0C9UqMwk7pvKLrQqi4UjIoqPVwV9SRmCtm41hYJnYPEBqu1xeDyGBfeImYUMvXAlLWYa/D5sxldarGs6Ko1V+RSNKnWKuxs1QKLyD8xEqy1nqP1zRUMNPgeXGe1GWda03z9N+j0QxQaSo4PP8b/lk1+7bCPCXVpbeNJ+bVh7KfAMUqeAuqaTym6U/HSS9PtJ//TgznDei49JMm3W3xFQ6NoyCQAA"
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/91WW0/bMBT+LfhxMhkFnvq0UrqBBiNrysNUIeTap6mHY2e+tIqs/PfJiRPCrZqmTZP25ONz/c7Fl+PEH58eJUcHZGcOKXs4FHyV+MwS+oDJztx7c5L4M0cfwC49Is6qcxBg4Wb1Hag1aGy1A4xWjcYXUgAao3cII6q0QeNgIoTaAbsGu1EssNCn2QJhdDGbnKM73MlvNM+5NNE6Mi+AMNAts77DSEOhtkSkSnBaoTFiYKxWFcJoC9pwJYG1gGrsEWFsqrSZOwF/FghuJO/QXRPllyvy6+Dv8HQt25rjdmmNlj56jTiebgdWrXq0PSMGaixIsWIk8dO1TEEX3ISI+KOT1HIllz7AoZqXYRcBg9xyrWQB0kbOOqo/6TPryA2RTIDu0nXS8qgW2zEbOlwOq/hPg78tbEra1ajGrJKkUGyV+AVZCVh6VBJteRB+hgqNPZKP2GxVBjIL82KUtvs1VlwILvPrNqF08u0+nc3v57Ovt7NssXd4bIDS16SF3MCrMSdF4ueqQUqMcQWwswZEqbmkvCRiQqlyfYVbnWAwoX0raowKIkkOrAnOoT3WQ1410VG3q+dCpV2IDvLSR6m1hG4upeASelnfir3C/X5/O8Ho+3qY0T/L8b9v09vSZnRDWjhedyHbLthCBckLDC/ZjGWWWAhH2TwJ+5L9x/z/baCvs5t6taWqsTm5J8aANckkLFio3CT+SuWftHLl0iMRycerAr/GbJx2ZjUmJc+JhR2ptsfN4zEpedDILMkhEJfSQq5JmMO2fc5CjanKJbcq8bcGdKqUCDdQO8RzoGoLukLjY4xKYsxO6f7QeVRweQUyt5v+1fzhuIZznvPHtzUyr9QONCUGnvGzqlgp8Vz7tiyH2vW+S9WAWGc8l7flTIa7lKHxmggDGBmey0s5EZyYcMQ8cgZ0e6lHry6m/KymXSVwR0wFBxk+VZ1Bd7yd3XwUatd7T2ORunwCL9NlHzAHCZpYyIDq8BmISN2TOG+gaYV1jafOWFXMwSinKfRPYNPTyHymk2q15Qx0+F/gZujCUHCZ46GXxsONs6WzNR6NTpPRIRHlhiRHBx/il/N9WIeDFjX8hbVlmLewtgMXqGbEGmowe3WN08pulHx/koxGyej04Lvh/DD+A5J5u/4EZksMke0KAAA="
    },
    "Metadata": {
     "aws:cdk:path": "InfraStack/CDKMetadata/Default"
    },
    "Condition": "CDKMetadataAvailable"
+  }
+ },
+ "Outputs": {
+  "UserPoolId": {
+   "Value": {
+    "Ref": "PhotologUserPoolD3DA7D95"
+   }
+  },
+  "AppClientId": {
+   "Value": {
+    "Ref": "PhotologUserPoolPhotologAppClient2CE306BB"
+   }
   }
  },
  "Conditions": {

@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react'
 
+import { Amplify } from 'aws-amplify';
+import { withAuthenticator, type WithAuthenticatorProps } from '@aws-amplify/ui-react';
+import '@aws-amplify/ui-react/styles.css'; // デフォルトのスタイル
+import { authConfig } from './amplify-config';
+
 // --- 型定義 ---
 interface Photo {
   S3Key: string;
@@ -9,7 +14,10 @@ interface Photo {
   isVideo: boolean;         // APIから返ってくる動画判定フラグ
 }
 
-function App() {
+// Amplifyの初期化
+Amplify.configure(authConfig);
+
+function App({ signOut, user }: WithAuthenticatorProps) {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
@@ -21,7 +29,8 @@ function App() {
   });
 
   const API_BASE_URL = "https://yvnmn6vrel.execute-api.ap-northeast-1.amazonaws.com/photos";
-  const USER_ID = "yasu";
+  const USER_ID = user?.username;
+  console.log("Authenticated user:", user);
 
   // 月を移動するロジック
   const changeMonth = (offset: number) => {
@@ -59,7 +68,20 @@ function App() {
   return (
     <div style={containerStyle}>
       <header style={headerStyle}>
-        <h1 style={{ margin: 0 }}>📸 {USER_ID}のPhotolog</h1>
+        <h1 style={{ margin: 0 }}>📸 {user?.username}のPhotolog</h1>
+        <button 
+          onClick={signOut} 
+          style={{ 
+            padding: '8px 16px', 
+            cursor: 'pointer',
+            borderRadius: '4px',
+            border: 'none',
+            backgroundColor: '#ef5350',
+            color: 'white'
+          }}
+        >
+          ログアウト
+        </button>
         
         <div style={navStyle}>
           <button onClick={() => changeMonth(-1)} style={buttonStyle}>◀ 前月</button>
@@ -165,4 +187,10 @@ const modalOverlayStyle: React.CSSProperties = { position: 'fixed', top: 0, left
 const modalContentStyle: React.CSSProperties = { position: 'relative', textAlign: 'center', maxWidth: '90%' };
 const modalImgStyle: React.CSSProperties = { maxWidth: '100%', maxHeight: '85vh', borderRadius: '4px' };
 
-export default App;
+//export default App;
+// withAuthenticator でエクスポートする
+// 2. 認証機能を被せた新しいコンポーネントを作る
+const AuthenticatedApp = withAuthenticator(App);
+
+// 3. 名前付きのコンポーネントとしてデフォルトエクスポート
+export default AuthenticatedApp;

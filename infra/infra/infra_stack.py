@@ -5,6 +5,8 @@ from aws_cdk import (
     aws_s3_notifications as s3n,
     aws_dynamodb as dynamodb,
     aws_lambda as _lambda,
+    aws_cognito as cognito,
+    CfnOutput,
     RemovalPolicy,
     # aws_sqs as sqs,
 )
@@ -127,3 +129,39 @@ class InfraStack(Stack):
                 api_handler
             )
         )
+
+        # Cognito
+        # 1. User Pool の作成
+        user_pool = cognito.UserPool(self, "PhotologUserPool",
+            user_pool_name="photolog-prod-userPool-auth-yasu",
+            self_sign_up_enabled=False,  # 勝手に登録させない
+            sign_in_aliases=cognito.SignInAliases(
+                username=True  # ユーザー名でログイン
+            ),
+            password_policy=cognito.PasswordPolicy(
+                min_length=12,
+                require_lowercase=True,
+                require_uppercase=True,
+                require_digits=True,
+                require_symbols=True
+                #temp_password_validity=Duration.days(7)
+            ),
+            # ユーザーがパスワードを忘れた時のリカバリー方法
+            account_recovery=cognito.AccountRecovery.EMAIL_ONLY,
+            # スタック削除時にUserPoolも削除するかどうか (本番運用なら DESTROY 以外も検討)
+            removal_policy=RemovalPolicy.DESTROY 
+        )
+
+        # 2. Client の作成 (React App用)
+        user_pool_client = user_pool.add_client("PhotologAppClient",
+            user_pool_client_name="photolog-prod-userPoolClient-reactApp-yasu",
+            auth_flows=cognito.AuthFlow(
+                user_password=True,  # ID/PW認証を許可
+                user_srp=True
+            ),
+            generate_secret=False  # フロントエンド用なのでシークレットは作らない
+        )
+
+        # 3. 後の設定で使うIDを出力
+        CfnOutput(self, "UserPoolId", value=user_pool.user_pool_id)
+        CfnOutput(self, "AppClientId", value=user_pool_client.user_pool_client_id)

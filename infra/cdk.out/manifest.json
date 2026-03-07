@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/44d18ddcb75c72dd2073c838355b28bd968525813e68e95f78ee8e31628676c6.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/97766078ef8357a45c60d3c259233dcd004cbd2d5d262c6db10512751e8f537b.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -639,6 +639,65 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "ApiGatewayGETphotos9F91333C"
+          }
+        ],
+        "/InfraStack/PhotologUserPool": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "accountRecovery": 2,
+              "passwordPolicy": {
+                "minLength": "*",
+                "requireDigits": true,
+                "requireLowercase": true,
+                "requireSymbols": true,
+                "requireUppercase": true
+              },
+              "removalPolicy": "destroy",
+              "selfSignUpEnabled": false,
+              "signInAliases": {
+                "username": true
+              },
+              "userPoolName": "*"
+            }
+          }
+        ],
+        "/InfraStack/PhotologUserPool/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PhotologUserPoolD3DA7D95"
+          }
+        ],
+        "/InfraStack/PhotologUserPool/PhotologAppClient": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "userPool": "*",
+              "authFlows": {
+                "userPassword": true,
+                "userSrp": true
+              },
+              "generateSecret": false,
+              "userPoolClientName": "*"
+            }
+          }
+        ],
+        "/InfraStack/PhotologUserPool/PhotologAppClient/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PhotologUserPoolPhotologAppClient2CE306BB"
+          }
+        ],
+        "/InfraStack/UserPoolId": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "UserPoolId"
+          }
+        ],
+        "/InfraStack/AppClientId": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AppClientId"
           }
         ],
         "/InfraStack/CDKMetadata/Default": [
