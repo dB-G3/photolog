@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react'
 
 // --- 型定義 ---
 interface Photo {
-  ShootingDate: string;
-  displayUrl: string;
   S3Key: string;
+  ShootingDate: string;
+  displayUrl: string;      // サムネイル画像（.jpg）
+  displayUrlMovie?: string; // 動画の場合、動画本体（.mp4）
+  isVideo: boolean;         // APIから返ってくる動画判定フラグ
 }
 
 function App() {
@@ -76,7 +78,7 @@ function App() {
             <div 
               key={photo.S3Key} 
               onClick={() => setSelectedPhoto(photo)}
-              style={photoCardStyle}
+              style={{ ...photoCardStyle, position: 'relative' }}
             >
               <img 
                 src={photo.displayUrl} 
@@ -84,6 +86,16 @@ function App() {
                 style={imgStyle} 
                 loading="lazy"
               />
+              {/* 動画の場合だけアイコンを重ねる */}
+              {isVideo(photo.S3Key) && (
+                <div style={{
+                  position: 'absolute', top: '10px', right: '10px',
+                  backgroundColor: 'rgba(0,0,0,0.6)', color: 'white',
+                  padding: '2px 8px', borderRadius: '4px', fontSize: '12px'
+                }}>
+                  ▶ 動画
+                </div>
+              )}
               <div style={dateLabelStyle}>{photo.ShootingDate.split('T')[0]}</div>
             </div>
           ))}
@@ -93,15 +105,50 @@ function App() {
       {/* モーダル表示 */}
       {selectedPhoto && (
         <div style={modalOverlayStyle} onClick={() => setSelectedPhoto(null)}>
-          <div style={modalContentStyle}>
-            <img src={selectedPhoto.displayUrl} alt="full" style={modalImgStyle} />
-            <p style={{ color: 'white' }}>{selectedPhoto.ShootingDate.replace('T', ' ')}</p>
+          <div style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
+
+            {/* APIのフラグで分岐 */}
+            {selectedPhoto.isVideo && selectedPhoto.displayUrlMovie ? (
+              <video 
+                key={selectedPhoto.S3Key} // 別の動画に切り替わった時に確実に再描画
+                src={selectedPhoto.displayUrlMovie} 
+                controls 
+                autoPlay 
+                muted // ブラウザの自動再生ブロック対策（まずは音消しで確実に動かす）
+                playsInline
+                style={{ maxWidth: '100%', maxHeight: '80vh', borderRadius: '8px' }}
+              >
+                <source src={selectedPhoto.displayUrlMovie} type="video/mp4" />
+                ご使用のブラウザは動画再生に対応していません。
+              </video>
+            ) : (
+              <img 
+                src={selectedPhoto.displayUrl} 
+                alt="Full size" 
+                style={modalImgStyle} 
+              />
+            )}
+
+            {/* 下部の情報表示 */}
+            <div style={{ color: 'white', marginTop: '10px', textAlign: 'center' }}>
+              <div>{selectedPhoto.ShootingDate.replace('T', ' ')}</div>
+              {selectedPhoto.isVideo && (
+                <span style={{ fontSize: '0.8rem', color: '#aaa' }}>VIDEO MODE</span>
+              )}
+            </div>
           </div>
         </div>
       )}
     </div>
   );
 }
+
+// 動画判定用のヘルパー関数
+const isVideo = (url: string) => {
+  // 正規表現
+  const videoThumbPattern = /\.(mp4|mov|webm)$/i;
+  return videoThumbPattern.test(url);
+};
 
 // --- スタイル定義（Tailwind未導入のためJSオブジェクトで定義） ---
 const containerStyle: React.CSSProperties = { padding: '20px', maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'stretch' };

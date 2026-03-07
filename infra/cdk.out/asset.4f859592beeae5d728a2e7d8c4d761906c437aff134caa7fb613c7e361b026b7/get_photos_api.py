@@ -40,7 +40,9 @@ def handler(event, context):
             s3_key = item.get('S3Key')
             if s3_key:
                 # 動画ファイルの場合はサムネイルと動画両方のURLを生成
-                if s3_key.endswith('.mov') or s3_key.endswith('.mp4') or s3_key.endswith('.MOV') or s3_key.endswith('.MP4'):
+                print(s3_key)
+                if s3_key.endswith('.mov') or s3_key.endswith('.mp4'):
+                    print('isMovie')
                     item['isVideo'] = True
                     presigned_url_movieThumbnail = s3_client.generate_presigned_url(
                         'get_object',
@@ -55,6 +57,7 @@ def handler(event, context):
                     item['displayUrl'] = presigned_url_movieThumbnail
                     item['displayUrlMovie'] = presigned_url
                 else:
+                    print('isnotmovie')
                     item['isVideo'] = False
                     presigned_url = s3_client.generate_presigned_url(
                         'get_object',

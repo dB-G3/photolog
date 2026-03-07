@@ -1,6 +1,7 @@
 import boto3
 from botocore.exceptions import NoCredentialsError
 import urllib
+import mimetypes
 
 def upload_thumbnail_with_metadata(file_path, bucket_name, object_name, user_id, shooting_date):
     """
@@ -28,6 +29,9 @@ def upload_thumbnail_with_metadata(file_path, bucket_name, object_name, user_id,
         # タグをURLエンコード文字列に変換
         tag_string = urllib.parse.urlencode(tags)
 
+        # ファイル名から content-type を自動判定 (例: .mov -> video/quicktime)
+        content_type, _ = mimetypes.guess_type(file_path)
+
         # アップロード実行
         s3_client.upload_file(
             file_path, 
@@ -36,7 +40,7 @@ def upload_thumbnail_with_metadata(file_path, bucket_name, object_name, user_id,
             ExtraArgs={
                 'Metadata': metadata,
                 'Tagging': tag_string,
-                'ContentType': 'image/jpeg' # 形式に合わせて変更
+                'ContentType': content_type or 'video/mp4'
             }
         )
         print(f"Upload Successful: {object_name}")

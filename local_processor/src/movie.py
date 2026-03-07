@@ -71,3 +71,29 @@ def compress_video(input_path, output_path):
     ]
     subprocess.run(cmd)
     print(f"動画を圧縮しました: {output_path}")
+
+def convert_to_mp4(input_path, output_path):
+    """
+    MOVなどの動画をChromeで再生可能なH.264/MP4形式に変換する
+    """
+    print(f"変換中: {input_path} -> {output_path}")
+    
+    # ffmpegコマンドを構築
+    command = [
+        'ffmpeg',
+        '-i', str(input_path),        # 入力
+        '-vcodec', 'libx264',         # 映像: H.264 (超広範な互換性)
+        '-pix_fmt', 'yuv420p',        # iPhone動画再生に必須の設定
+        '-acodec', 'aac',             # 音声: AAC
+        '-b:v', '1M',                 # ビットレート(任意) 
+        '-y',                         # 上書き許可
+        str(output_path)              # 出力
+    ]
+    
+    try:
+        # コマンド実行（標準エラーをキャプチャ）
+        subprocess.run(command, check=True, capture_output=True)
+        return output_path
+    except subprocess.CalledProcessError as e:
+        print(f"FFmpegエラー: {e.stderr.decode()}")
+        raise e

@@ -93,8 +93,13 @@ if __name__ == "__main__":
                 
                 print(f"動画処理開始: {relative_path}")
                 #print(save_path_video)
+                if img_file.suffix.lower() in [".mov"]:
+                    save_path_video = temp_dir / relative_path.with_suffix(".mp4").name
+                    save_path_video_thumbnail = temp_dir / relative_path.with_suffix(".mp4").name
+                    img_file = movie.convert_to_mp4(img_file, save_path_video)
+                else:
+                    movie.compress_video(img_file, save_path_video)
                 movie.extract_video_thumbnail(img_file, save_path_video_thumbnail.with_suffix(".jpg"), relative_path, 1.0)
-                movie.compress_video(img_file, save_path_video)
 
                 #S3にアップロード
                 upload.upload_thumbnail_with_metadata(
