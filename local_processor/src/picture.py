@@ -4,7 +4,12 @@ from pillow_heif import register_heif_opener
 from PIL.ExifTags import TAGS
 from PIL import ImageOps
 
+import os
+
 import util
+
+# 画像圧縮品質
+IMG_QUALUTY = 60
 
 # HEICをPillowで開けるように登録
 register_heif_opener()
@@ -43,11 +48,18 @@ def get_exif_data(img_file, relative_path, output_dir):
 def process_image(img_file, target_width, target_height, save_path, relative_path, output_dir):
 
     try:
+        # 拡張子をチェックし、.heicなら保存先を.jpgに変更
+        base, ext = os.path.splitext(save_path)
+        if ext.lower() in ['.heic', '.heif']:
+            save_path = base + ".jpg"
         with Image.open(img_file) as img:
             img = ImageOps.exif_transpose(img) # Exifの回転情報を反映
             img.thumbnail((target_width, target_height))
-            img.save(save_path)
-            return img
+            # RGBモードに変換（HEICなどの特殊なモードをJPEG対応にするため）
+            if img.mode != "RGB":
+                img = img.convert("RGB")
+            img.save(save_path, "JPEG", quality=IMG_QUALUTY)
+            return img, save_path
     except Exception as e:
         msg = "リサイズ失敗" + str(relative_path) + " - " + str(e)
         util.output_error_log(output_dir, msg)

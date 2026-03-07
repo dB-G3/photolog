@@ -56,11 +56,12 @@ if __name__ == "__main__":
                 save_path_pict = temp_dir / relative_path.name
                 
                 #ファイルの圧縮
-                img = picture.process_image(img_file, TARGET_WIDTH, TARGET_HEIGHT, save_path_pict, relative_path, OUTPUT_DIR)
+                ret = picture.process_image(img_file, TARGET_WIDTH, TARGET_HEIGHT, save_path_pict, relative_path, OUTPUT_DIR)
 
                 #S3にアップロード
                 upload.upload_thumbnail_with_metadata(
-                    file_path=save_path_pict,
+                    #file_path=save_path_pict,
+                    file_path=ret[1],
                     bucket_name='photolog-prod-s3-thumbnail-yasu',
                     object_name=str(save_path_pict.relative_to(output_path)),
                     user_id='yasu',
