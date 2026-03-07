@@ -88,9 +88,14 @@ class InfraStack(Stack):
         )
         table.grant_write_data(meta_lambda) # LambdaにDynamoDB書き込み権限を付与
         bucket_yasu.grant_read(meta_lambda) # LambdaにS3読み取り権限を付与
+        bucket_megu.grant_read(meta_lambda) # LambdaにS3読み取り権限を付与
 
         # S3イベント通知を設定
         bucket_yasu.add_event_notification(
+            s3.EventType.OBJECT_CREATED,
+            s3n.LambdaDestination(meta_lambda)
+        )
+        bucket_megu.add_event_notification(
             s3.EventType.OBJECT_CREATED,
             s3n.LambdaDestination(meta_lambda)
         )

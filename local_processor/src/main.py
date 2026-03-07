@@ -8,6 +8,9 @@ import picture
 import movie
 import upload
 
+import argparse
+import sys
+
 
 TARGET_WIDTH = 800
 TARGET_HEIGHT = 600
@@ -15,10 +18,14 @@ BASE_DIR = "../"
 INPUT_DIR = os.path.join(BASE_DIR, "test-data/input")
 OUTPUT_DIR = os.path.join(BASE_DIR, "test-data/output")
 OUTPUT_ZIP_DIR = os.path.join(BASE_DIR, "test-data/output/zip")
+    
+def main():
+    parser = argparse.ArgumentParser(description='Photolog Local Processor')
+    parser.add_argument('--user', type=str, required=True, help='実行するユーザー名 (yasu, megu など)')
+    args = parser.parse_args()
+    user_id = args.user
 
-
-if __name__ == "__main__":
-    print(f"--- 探索開始: {INPUT_DIR} ---")
+    print(f"--- 探索開始: {user_id}:{INPUT_DIR} ---")
     
     input_path = Path(INPUT_DIR)
     output_path = Path(OUTPUT_DIR)
@@ -62,9 +69,9 @@ if __name__ == "__main__":
                 upload.upload_thumbnail_with_metadata(
                     #file_path=save_path_pict,
                     file_path=ret[1],
-                    bucket_name='photolog-prod-s3-thumbnail-yasu',
+                    bucket_name='photolog-prod-s3-thumbnail-' + user_id,
                     object_name=str(save_path_pict.relative_to(output_path)),
-                    user_id='yasu',
+                    user_id=user_id,
                     shooting_date=iso_date + '#' + str(save_path_pict.name),
                     )
 
@@ -104,16 +111,16 @@ if __name__ == "__main__":
                 #S3にアップロード
                 upload.upload_thumbnail_with_metadata(
                     file_path=save_path_video_thumbnail.with_suffix(".jpg"),
-                    bucket_name='photolog-prod-s3-thumbnail-yasu',
+                    bucket_name='photolog-prod-s3-thumbnail-' + user_id,
                     object_name=str(save_path_video_thumbnail.relative_to(output_path))+'.jpg',
-                    user_id='yasu',
+                    user_id=user_id,
                     shooting_date=iso_date + '#' + str(save_path_video_thumbnail.name),
                     )
                 upload.upload_thumbnail_with_metadata(
                     file_path=save_path_video,
-                    bucket_name='photolog-prod-s3-thumbnail-yasu',
+                    bucket_name='photolog-prod-s3-thumbnail-' + user_id,
                     object_name=str(save_path_video.relative_to(output_path)),
-                    user_id='yasu',
+                    user_id=user_id,
                     shooting_date=iso_date + '#' + str(save_path_video.name),
                     )
             
@@ -138,3 +145,6 @@ if __name__ == "__main__":
             zip_path = os.path.join(OUTPUT_ZIP_DIR, date_dir.name)
             zip_file = util.zip_directory(zip_path, date_dir)
     print('Zip圧縮完了')
+
+if __name__ == "__main__":
+    main()

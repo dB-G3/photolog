@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/97766078ef8357a45c60d3c259233dcd004cbd2d5d262c6db10512751e8f537b.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/898238af7e0f35cd5f68b0a8c17768a82ac627588e6e777585c6f52af49a84b0.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -177,6 +177,18 @@
             "data": "PhotologRawBucketmeguv2AutoDeleteObjectsCustomResource61F1C922"
           }
         ],
+        "/InfraStack/PhotologRawBucket-megu-v2/Notifications/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PhotologRawBucketmeguv2Notifications0274F525"
+          }
+        ],
+        "/InfraStack/PhotologRawBucket-megu-v2/AllowBucketNotificationsToInfraStackS3MetaHandler486B3A96": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PhotologRawBucketmeguv2AllowBucketNotificationsToInfraStackS3MetaHandler486B3A963470698C"
+          }
+        ],
         "/InfraStack/PhotologMetadataTable": [
           {
             "type": "aws:cdk:analytics:construct",
@@ -281,6 +293,14 @@
                 {}
               ]
             }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
           }
         ],
         "/InfraStack/S3MetaHandler/ServiceRole/Resource": [
@@ -307,6 +327,14 @@
             "data": {
               "attachToRole": [
                 "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
               ]
             }
           },
@@ -396,6 +424,14 @@
                 "*"
               ]
             }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
           }
         ],
         "/InfraStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/Resource": [
@@ -422,6 +458,14 @@
             "data": {
               "attachToRole": [
                 "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
               ]
             }
           },

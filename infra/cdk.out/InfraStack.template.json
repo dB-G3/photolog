@@ -363,6 +363,69 @@
     "aws:cdk:path": "InfraStack/PhotologRawBucket-megu-v2/AutoDeleteObjectsCustomResource/Default"
    }
   },
+  "PhotologRawBucketmeguv2Notifications0274F525": {
+   "Type": "Custom::S3BucketNotifications",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691",
+      "Arn"
+     ]
+    },
+    "BucketName": {
+     "Ref": "PhotologRawBucketmeguv2DD497B79"
+    },
+    "NotificationConfiguration": {
+     "LambdaFunctionConfigurations": [
+      {
+       "Events": [
+        "s3:ObjectCreated:*"
+       ],
+       "LambdaFunctionArn": {
+        "Fn::GetAtt": [
+         "S3MetaHandler6882543C",
+         "Arn"
+        ]
+       }
+      }
+     ]
+    },
+    "Managed": true,
+    "SkipDestinationValidation": false
+   },
+   "DependsOn": [
+    "PhotologRawBucketmeguv2AllowBucketNotificationsToInfraStackS3MetaHandler486B3A963470698C",
+    "PhotologRawBucketmeguv2Policy2EEAC3CE"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/PhotologRawBucket-megu-v2/Notifications/Resource"
+   }
+  },
+  "PhotologRawBucketmeguv2AllowBucketNotificationsToInfraStackS3MetaHandler486B3A963470698C": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "S3MetaHandler6882543C",
+      "Arn"
+     ]
+    },
+    "Principal": "s3.amazonaws.com",
+    "SourceAccount": {
+     "Ref": "AWS::AccountId"
+    },
+    "SourceArn": {
+     "Fn::GetAtt": [
+      "PhotologRawBucketmeguv2DD497B79",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/PhotologRawBucket-megu-v2/AllowBucketNotificationsToInfraStackS3MetaHandler486B3A96"
+   }
+  },
   "PhotologMetadataTable13691B3C": {
    "Type": "AWS::DynamoDB::Table",
    "Properties": {
@@ -488,8 +551,28 @@
        "Resource": [
         {
          "Fn::GetAtt": [
+          "PhotologRawBucketmeguv2DD497B79",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
           "PhotologRawBucketyasuv228F0992E",
           "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "PhotologRawBucketmeguv2DD497B79",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
          ]
         },
         {
@@ -666,12 +749,20 @@
       {
        "Action": "s3:PutBucketNotification",
        "Effect": "Allow",
-       "Resource": {
-        "Fn::GetAtt": [
-         "PhotologRawBucketyasuv228F0992E",
-         "Arn"
-        ]
-       }
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "PhotologRawBucketmeguv2DD497B79",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "PhotologRawBucketyasuv228F0992E",
+          "Arn"
+         ]
+        }
+       ]
       }
      ],
      "Version": "2012-10-17"
@@ -1141,7 +1232,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/91WW0/bMBT+LfhxMhkFnvq0UrqBBiNrysNUIeTap6mHY2e+tIqs/PfJiRPCrZqmTZP25ONz/c7Fl+PEH58eJUcHZGcOKXs4FHyV+MwS+oDJztx7c5L4M0cfwC49Is6qcxBg4Wb1Hag1aGy1A4xWjcYXUgAao3cII6q0QeNgIoTaAbsGu1EssNCn2QJhdDGbnKM73MlvNM+5NNE6Mi+AMNAts77DSEOhtkSkSnBaoTFiYKxWFcJoC9pwJYG1gGrsEWFsqrSZOwF/FghuJO/QXRPllyvy6+Dv8HQt25rjdmmNlj56jTiebgdWrXq0PSMGaixIsWIk8dO1TEEX3ISI+KOT1HIllz7AoZqXYRcBg9xyrWQB0kbOOqo/6TPryA2RTIDu0nXS8qgW2zEbOlwOq/hPg78tbEra1ajGrJKkUGyV+AVZCVh6VBJteRB+hgqNPZKP2GxVBjIL82KUtvs1VlwILvPrNqF08u0+nc3v57Ovt7NssXd4bIDS16SF3MCrMSdF4ueqQUqMcQWwswZEqbmkvCRiQqlyfYVbnWAwoX0raowKIkkOrAnOoT3WQ1410VG3q+dCpV2IDvLSR6m1hG4upeASelnfir3C/X5/O8Ho+3qY0T/L8b9v09vSZnRDWjhedyHbLthCBckLDC/ZjGWWWAhH2TwJ+5L9x/z/baCvs5t6taWqsTm5J8aANckkLFio3CT+SuWftHLl0iMRycerAr/GbJx2ZjUmJc+JhR2ptsfN4zEpedDILMkhEJfSQq5JmMO2fc5CjanKJbcq8bcGdKqUCDdQO8RzoGoLukLjY4xKYsxO6f7QeVRweQUyt5v+1fzhuIZznvPHtzUyr9QONCUGnvGzqlgp8Vz7tiyH2vW+S9WAWGc8l7flTIa7lKHxmggDGBmey0s5EZyYcMQ8cgZ0e6lHry6m/KymXSVwR0wFBxk+VZ1Bd7yd3XwUatd7T2ORunwCL9NlHzAHCZpYyIDq8BmISN2TOG+gaYV1jafOWFXMwSinKfRPYNPTyHymk2q15Qx0+F/gZujCUHCZ46GXxsONs6WzNR6NTpPRIRHlhiRHBx/il/N9WIeDFjX8hbVlmLewtgMXqGbEGmowe3WN08pulHx/koxGyej04Lvh/DD+A5J5u/4EZksMke0KAAA="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/+VWW0/bMBT+LfhxMhkFnvq0UrqBBiNrysNUIeTap6mHY2e+tIqs/PfJiRMCbBWaNm3Snnxyrt+55NjHiT8+PUqODsjOHFL2cCj4KvGZJfQBk5259+Yk8WeOPoBdekScVecgwMLN6itQa9DYagcYrRqNT6QANEZvEEZUaYPGwUQItQN2DXajWGChD7MFwuhiNjlHd7iT32iec2midWReAGGgW2Z9h5GGQm2JSJXgtEJjxMBYrSqE0Ra04UoCawHV2CPC2FRpM3cCfi8Q3EjeoLsmyqsr8nrwd3i6lm3NcXu0RksfvUYcTz8HVq16tD0jBmosSLFiJPHTtUxBF9yEiPi9k9RyJZc+wKGal+ErAga55VrJAqSNnHVUf9Jn1pEbIpkA3aXrpOVRLbZjNnS4HFbxrwb/ubApaVejGrNKkkKxVeIXZCVg6VFJtOVB+BEqNPZIPmKzVRnILMyLUdru11hxIbjMr9uE0smX+3Q2v5/PPt/OssXe4bEBSl+TFnIDr8acFImfqwYpMcYVwM4aEKXmkvKSiAmlyvUVbnWCwYT2ragxKogkObAmOIf2tx7yqomOul09FyrtQnSQlz5KrSV0cykFl9DL+lbsFe73u1/6y+lH39fDfP/RCvzHLW7GPqSF46oM2XbBFipIXmB4yWYss8RCWAPmSdhXs/902L+TVlPdtrA1Nif3xBiwJpmEAwuVm8RfqfyDVq5ceiQi+biU8I+YjdPOrMak5DmxsCPV9ri5piYlDxqZJTkE4lJayDUJU9s221moMVW55FYl/taATpUSYde1Iz8HqragKzQ+xqgkxuyU7n9gjwour0DmdtPfz98c13DOc/54i0fmldqBpsTAM35WFSslnmvfluVQu963vg2IdcZzeVvOZNjaDI3XRBjAyPBcXsqJ4MSEH9IjZ0C310f06mLKz2raVQJ3xFRwkOH51hl0y8DZzXuhdr33NBapyyfwMl32AXOQoImFDKgOz46I1D2J8xM0rbCu8dQZq4o5GOU0hf6ybXoamc90Uq22nIEOLxncDF0YCi5zPPTSeLhxtnS2xqPRaTI6JKLckOTo4F183L4N53DQooa/sLYM8xbOduAC1YxYQw1mr65xWtmNkm9PktEoGZ0efDWcH8YXRzJvz+8+F4znVwsAAA=="
    },
    "Metadata": {
     "aws:cdk:path": "InfraStack/CDKMetadata/Default"
