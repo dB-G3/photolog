@@ -136,7 +136,7 @@ function App({ signOut, user }: WithAuthenticatorProps) {
                 src={selectedPhoto.displayUrlMovie} 
                 controls 
                 autoPlay 
-                muted // ブラウザの自動再生ブロック対策（まずは音消しで確実に動かす）
+                //muted // ブラウザの自動再生ブロック対策
                 playsInline
                 style={{ maxWidth: '100%', maxHeight: '80vh', borderRadius: '8px' }}
               >
