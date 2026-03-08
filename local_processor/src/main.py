@@ -45,6 +45,9 @@ def main():
                     dt = datetime.datetime.strptime(exif_data.get('DateTimeOriginal'), "%Y:%m:%d %H:%M:%S")
                 elif exif_data.get('DateTime'): #修正日時
                     dt = datetime.datetime.strptime(exif_data.get('DateTime'), "%Y:%m:%d %H:%M:%S")
+                else:
+                    # 撮影日時が取得できない場合はUNIXエポック日時の開始日時をセット
+                    dt = datetime.datetime(1970, 1, 1, 0, 0, 0)
                 # ISO 8601形式の文字列に変換
                 iso_date = dt.isoformat()
 
@@ -106,7 +109,7 @@ def main():
                     img_file = movie.convert_to_mp4(img_file, save_path_video)
                 else:
                     movie.compress_video(img_file, save_path_video)
-                movie.extract_video_thumbnail(img_file, save_path_video_thumbnail.with_suffix(".jpg"), relative_path, 1.0)
+                movie.extract_video_thumbnail(img_file, save_path_video_thumbnail.with_suffix(".jpg"), relative_path, save_path_video, 0.1)
 
                 #S3にアップロード
                 upload.upload_thumbnail_with_metadata(

@@ -10,6 +10,7 @@ LOGFILE_NAME = "log.txt"
 
 def output_error_log(output_dir, msg):
     print(msg)
+    print(output_dir)
     with open(output_dir + '/' + ERROR_LOGFILE_NAME,"a") as o:
         print(time.strftime("%Y-%m-%d %H:%M:%S:: ", time.localtime()) + str(msg), file=o)
 
