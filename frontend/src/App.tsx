@@ -63,7 +63,7 @@ function App({ signOut, user }: WithAuthenticatorProps) {
       }
     };
     fetchPhotos();
-  }, [currentMonth]); // 月が変更されるたびに実行
+  }, [currentMonth, USER_ID]); // 月が変更されるたびに実行
 
   return (
     <div style={containerStyle}>
