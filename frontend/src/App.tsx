@@ -190,7 +190,17 @@ const modalImgStyle: React.CSSProperties = { maxWidth: '100%', maxHeight: '85vh'
 //export default App;
 // withAuthenticator でエクスポートする
 // 2. 認証機能を被せた新しいコンポーネントを作る
-const AuthenticatedApp = withAuthenticator(App);
+const AuthenticatedApp = withAuthenticator(App, {
+  hideSignUp: true, // サインアップを非表示にするオプション
+  components: {
+    SignIn: {
+      Footer() {
+        // 「Forgot your password?」が含まれるフッターを消去
+        return null;
+      },
+    },
+  },
+});
 
 // 3. 名前付きのコンポーネントとしてデフォルトエクスポート
 export default AuthenticatedApp;
