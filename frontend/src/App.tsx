@@ -43,6 +43,15 @@ function App({ signOut, user }: WithAuthenticatorProps) {
     });
   };
 
+  // 年を移動するロジック
+  const changeYear = (offset: number) => {
+    setCurrentMonth((prev) => ({
+      ...prev,
+      year: prev.year + offset,
+      // 月はそのまま維持
+    }));
+  };
+
   useEffect(() => {
     const fetchPhotos = async () => {
       setLoading(true);
@@ -84,9 +93,11 @@ function App({ signOut, user }: WithAuthenticatorProps) {
         </button>
         
         <div style={navStyle}>
+          <button onClick={() => changeYear(-1)} style={buttonStyle}>◀ 前年</button>
           <button onClick={() => changeMonth(-1)} style={buttonStyle}>◀ 前月</button>
           <span style={monthDisplayStyle}>{currentMonth.year}年 {currentMonth.month}月</span>
           <button onClick={() => changeMonth(1)} style={buttonStyle}>次月 ▶</button>
+          <button onClick={() => changeYear(1)} style={buttonStyle}>次年 ▶</button>
         </div>
       </header>
 
