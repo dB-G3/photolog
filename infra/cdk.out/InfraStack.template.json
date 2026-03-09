@@ -612,7 +612,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "8d973248252f4a6757a7d6cee230132fb786ff951dc42f4c622ac0d22563fbc9.zip"
+     "S3Key": "98496f2c31fc64e6c5d96cd0db4c33e1e2ef3324ababec4c523101a1ed8bbe57.zip"
     },
     "Description": "S3に画像がアップロードされた際にメタデータをDynamoDBに登録するLambda",
     "Environment": {
@@ -652,7 +652,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "InfraStack/S3MetaHandler/Resource",
-    "aws:asset:path": "asset.8d973248252f4a6757a7d6cee230132fb786ff951dc42f4c622ac0d22563fbc9",
+    "aws:asset:path": "asset.98496f2c31fc64e6c5d96cd0db4c33e1e2ef3324ababec4c523101a1ed8bbe57",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -899,8 +899,28 @@
        "Resource": [
         {
          "Fn::GetAtt": [
+          "PhotologRawBucketmeguv2DD497B79",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
           "PhotologRawBucketyasuv228F0992E",
           "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "PhotologRawBucketmeguv2DD497B79",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
          ]
         },
         {
@@ -940,7 +960,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "8d973248252f4a6757a7d6cee230132fb786ff951dc42f4c622ac0d22563fbc9.zip"
+     "S3Key": "98496f2c31fc64e6c5d96cd0db4c33e1e2ef3324ababec4c523101a1ed8bbe57.zip"
     },
     "Description": "写真を取得するAPI",
     "Environment": {
@@ -948,8 +968,11 @@
       "TABLE_NAME": {
        "Ref": "PhotologMetadataTable13691B3C"
       },
-      "THUMBNAIL_BUCKET_NAME": {
+      "THUMBNAIL_BUCKET_NAME_YASU": {
        "Ref": "PhotologRawBucketyasuv228F0992E"
+      },
+      "THUMBNAIL_BUCKET_NAME_MEGU": {
+       "Ref": "PhotologRawBucketmeguv2DD497B79"
       }
      }
     },
@@ -983,7 +1006,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "InfraStack/ApiGetPhotosHandler/Resource",
-    "aws:asset:path": "asset.8d973248252f4a6757a7d6cee230132fb786ff951dc42f4c622ac0d22563fbc9",
+    "aws:asset:path": "asset.98496f2c31fc64e6c5d96cd0db4c33e1e2ef3324ababec4c523101a1ed8bbe57",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1232,7 +1255,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/+VWW0/bMBT+LfhxMhkFnvq0UrqBBiNrysNUIeTap6mHY2e+tIqs/PfJiRMCbBWaNm3Snnxyrt+55NjHiT8+PUqODsjOHFL2cCj4KvGZJfQBk5259+Yk8WeOPoBdekScVecgwMLN6itQa9DYagcYrRqNT6QANEZvEEZUaYPGwUQItQN2DXajWGChD7MFwuhiNjlHd7iT32iec2midWReAGGgW2Z9h5GGQm2JSJXgtEJjxMBYrSqE0Ra04UoCawHV2CPC2FRpM3cCfi8Q3EjeoLsmyqsr8nrwd3i6lm3NcXu0RksfvUYcTz8HVq16tD0jBmosSLFiJPHTtUxBF9yEiPi9k9RyJZc+wKGal+ErAga55VrJAqSNnHVUf9Jn1pEbIpkA3aXrpOVRLbZjNnS4HFbxrwb/ubApaVejGrNKkkKxVeIXZCVg6VFJtOVB+BEqNPZIPmKzVRnILMyLUdru11hxIbjMr9uE0smX+3Q2v5/PPt/OssXe4bEBSl+TFnIDr8acFImfqwYpMcYVwM4aEKXmkvKSiAmlyvUVbnWCwYT2ragxKogkObAmOIf2tx7yqomOul09FyrtQnSQlz5KrSV0cykFl9DL+lbsFe73u1/6y+lH39fDfP/RCvzHLW7GPqSF46oM2XbBFipIXmB4yWYss8RCWAPmSdhXs/902L+TVlPdtrA1Nif3xBiwJpmEAwuVm8RfqfyDVq5ceiQi+biU8I+YjdPOrMak5DmxsCPV9ri5piYlDxqZJTkE4lJayDUJU9s221moMVW55FYl/taATpUSYde1Iz8HqragKzQ+xqgkxuyU7n9gjwour0DmdtPfz98c13DOc/54i0fmldqBpsTAM35WFSslnmvfluVQu963vg2IdcZzeVvOZNjaDI3XRBjAyPBcXsqJ4MSEH9IjZ0C310f06mLKz2raVQJ3xFRwkOH51hl0y8DZzXuhdr33NBapyyfwMl32AXOQoImFDKgOz46I1D2J8xM0rbCu8dQZq4o5GOU0hf6ybXoamc90Uq22nIEOLxncDF0YCi5zPPTSeLhxtnS2xqPRaTI6JKLckOTo4F183L4N53DQooa/sLYM8xbOduAC1YxYQw1mr65xWtmNkm9PktEoGZ0efDWcH8YXRzJvz+8+F4znVwsAAA=="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/+VWW0/bMBT+LfhxMhkFnvq0UrqBBiNrysNUIeTap6mHY2e+tIqs/PfJiRMCbBWaNm3Snuyc63c+H5/4OPHHp0fJ0QHZmUPKHg4FXyU+s4Q+YLIz996cJP7M0QewS4+Is+ocBFi4WX0Fag0aW+0Ao1Vj8YkUgMboDcKIKm3QOLgIoXbArsFuFAsi9GG2QBhdzCbn6A53+hvNcy5N9I7CCyAMdCus7zDSUKgtEakSnFZojBgYq1WFMNqCNlxJYC2gGntEGJsqbeZOwO8FghvNG3TXZHk1I68Hf4ena9lyjtuldVr6GDXiePo58GrNo+8ZMVBjQYoVI4mfrmUKuuAmZMTvnaSWK7n0AQ7VvAxfETDILddKFiBtlKyj+ZNzZt12QyQToLtynbQ8msXjmA0DLocs/tXkv6hs+O4IrDGrJCkUWyV+QVYClh6VRFselB+hQmOP5CNwW5Vhm4VmMkrb/RYrLgSX+XVbbTr5cp/O5vfz2efbWbbY21k2QOkJayE38GrMSZH4uWqQEmNcAeysAVFqLikviZhQqlxPf2sTHCa0P6cao4JIkgNrknNo7/xQVk10tO34XKi0S9FBXvqotZbQzaUUXEKv649ir3J/3P3aXy4/xr4e1vuPMvCfH/HPtc2lCEXjOGUDFx2UhQqaFwhfihnLLLEQhoR5kvbV4j+d9i+V9WNxQ3rLd43NyT0xBqxJJmHBQuUm8Vcq/6CVK5ceibh9nGT4R8ImaOdWY1LynFjYkWp73Pz4JiUPFpklOYTNpbSQaxJave0BZ6HGVOWSW5X4WwM6VUqEAdnekzlQtQVdofExRiUxZqd0f+s9Kri8ApnbTf/H/+a4hnOe88d3QRReqR1oSgw8k2dVsVLiufVtWQ6t630z34BYZzyXt+VMhlHP0HhNhAGMDM/lpZwITky4xR45A7r958SoLpb8jNOOCdxtpoKDDA/CzqGbIM5u3gu166OnkaSuniDLdNknzEGCJhYyoDo8ZCJS9yTPT9C0yrrGU2esKuZglNMU+j90c6ZR+Mwm1WrLGejwNsJN04Wm4DLHwyhNhBtnS2drPBqdJqNDIsoNSY4O3sXn8tuwDhstWvgLa8vQb2FtGy7smhZrdoPeq2ucVnaj5NuTZDRKRqcHXw3nh/ENk8zb9TsKT85cqQsAAA=="
    },
    "Metadata": {
     "aws:cdk:path": "InfraStack/CDKMetadata/Default"

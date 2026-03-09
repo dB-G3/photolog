@@ -110,11 +110,13 @@ class InfraStack(Stack):
             description="写真を取得するAPI",
             environment={
                 "TABLE_NAME": table.table_name, # テーブル名を環境変数で渡す
-                "THUMBNAIL_BUCKET_NAME": bucket_yasu.bucket_name # サムネイルバケット名を環境変数で渡す
+                "THUMBNAIL_BUCKET_NAME_YASU": bucket_yasu.bucket_name, # サムネイルバケット名を環境変数で渡す
+                "THUMBNAIL_BUCKET_NAME_MEGU": bucket_megu.bucket_name  # あまりいい作りではない
             },
         )
         table.grant_read_data(api_handler) # LambdaにDynamoDB読み込み権限を付与
         bucket_yasu.grant_read(api_handler) # LambdaにS3読み取り権限を付与
+        bucket_megu.grant_read(api_handler) # LambdaにS3読み取り権限を付与
 
         # API Gateway
         http_api = apigwv2.HttpApi(
