@@ -17,6 +17,7 @@ BUCKET_NAME_MEGU = os.environ.get('THUMBNAIL_BUCKET_NAME_MEGU')
 def handler(event, context):
     # API Gateway (HTTP API) からのクエリパラメータ取得
     query_params = event.get('queryStringParameters', {})
+    user_id = query_params.get('userId', 'User_01') # テスト用にデフォルト設定
     year_month = query_params.get('yearMonth', '') # 例: "2024-05"
 
     claims = event['requestContext']['authorizer']['claims']

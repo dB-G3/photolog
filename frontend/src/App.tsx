@@ -64,8 +64,9 @@ function App({ signOut, user }: WithAuthenticatorProps) {
         const session = await fetchAuthSession();
         const idToken = session.tokens?.idToken?.toString();
 
-        // 🟢 ヘッダーに Authorization を追加
-        const response = await fetch(`${API_BASE_URL}?userId=${USER_ID}&yearMonth=${monthStr}`, {
+        // ヘッダーに Authorization を追加
+        // userIdはcognitoのIDトークンに載せて送った方がセキュアなのでここでは送らない
+        const response = await fetch(`${API_BASE_URL}?yearMonth=${monthStr}`, {
           headers: {
             'Authorization': `Bearer ${idToken}`
           }
