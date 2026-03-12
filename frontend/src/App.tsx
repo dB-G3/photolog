@@ -31,7 +31,6 @@ function App({ signOut, user }: WithAuthenticatorProps) {
   });
 
   const API_BASE_URL = import.meta.env.VITE_API_URL;
-  //const API_BASE_URL = "https://yvnmn6vrel.execute-api.ap-northeast-1.amazonaws.com/photos";
   const USER_ID = user?.username;
   console.log("Authenticated user:", user);
 
