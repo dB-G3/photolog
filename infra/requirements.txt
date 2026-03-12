@@ -3,6 +3,7 @@ aws-cdk-lib==2.240.0
 aws-cdk.asset-awscli-v1==2.2.263
 aws-cdk.asset-node-proxy-agent-v6==2.1.1
 aws-cdk.aws-apigatewayv2-alpha==2.114.1a0
+aws-cdk.aws-apigatewayv2-authorizers-alpha==2.114.1a0
 aws-cdk.aws-apigatewayv2-integrations-alpha==2.114.1a0
 aws-cdk.cloud-assembly-schema==50.4.0
 cattrs==25.3.0

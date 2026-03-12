@@ -13,6 +13,7 @@ from aws_cdk import (
 # alpha 系はこっちで書く
 import aws_cdk.aws_apigatewayv2_alpha as apigwv2
 import aws_cdk.aws_apigatewayv2_integrations_alpha as integrations
+import aws_cdk.aws_apigatewayv2_authorizers_alpha as authorizers
 
 from constructs import Construct
 import os
@@ -125,15 +126,7 @@ class InfraStack(Stack):
             cors_preflight=apigwv2.CorsPreflightOptions(
                 allow_origins=["*"], # 開発時は全て許可。ブラウザからのアクセスを拒否されないため。
                 allow_methods=[apigwv2.CorsHttpMethod.GET],
-            )
-        )
-        # 作成済みの api_handler を APIに紐づける
-        http_api.add_routes(
-            path="/photos",
-            methods=[apigwv2.HttpMethod.GET],
-            integration=integrations.HttpLambdaIntegration(
-                "GetPhotosIntegration",
-                api_handler
+                allow_headers=["Authorization", "Content-Type"],
             )
         )
 
@@ -172,3 +165,26 @@ class InfraStack(Stack):
         # 3. 後の設定で使うIDを出力
         CfnOutput(self, "UserPoolId", value=user_pool.user_pool_id)
         CfnOutput(self, "AppClientId", value=user_pool_client.user_pool_client_id)
+
+        # # 4. 既存のUserPoolを引用（または定義済みならそれを使う）
+        # auth = http_api.CognitoUserPoolsAuthorizer(self, "PhotologAuthorizer",
+        #     cognito_user_pools=[user_pool]
+        # )
+
+        # API用オーソライザーを作成
+        auth = authorizers.HttpUserPoolAuthorizer(
+            "PhotologAuthorizer",
+            user_pool, # 既存の user_pool 変数を指定
+            user_pool_clients=[user_pool_client] # 既存の user_pool_client 変数を指定
+        )
+
+        # 作成済みの api_handler を APIに紐づける
+        http_api.add_routes(
+            path="/photos",
+            methods=[apigwv2.HttpMethod.GET],
+            integration=integrations.HttpLambdaIntegration(
+                "GetPhotosIntegration",
+                api_handler
+            ),
+            authorizer=auth # CognitoのIDトークン経由で認証
+        )

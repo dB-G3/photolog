@@ -1051,6 +1051,10 @@
    "Type": "AWS::ApiGatewayV2::Api",
    "Properties": {
     "CorsConfiguration": {
+     "AllowHeaders": [
+      "Authorization",
+      "Content-Type"
+     ],
      "AllowMethods": [
       "GET"
      ],
@@ -1153,7 +1157,10 @@
     "ApiId": {
      "Ref": "ApiGateway11E7F47B"
     },
-    "AuthorizationType": "NONE",
+    "AuthorizationType": "JWT",
+    "AuthorizerId": {
+     "Ref": "ApiGatewayPhotologAuthorizer19FC7423"
+    },
     "RouteKey": "GET /photos",
     "Target": {
      "Fn::Join": [
@@ -1169,6 +1176,44 @@
    },
    "Metadata": {
     "aws:cdk:path": "InfraStack/ApiGateway/GET--photos/Resource"
+   }
+  },
+  "ApiGatewayPhotologAuthorizer19FC7423": {
+   "Type": "AWS::ApiGatewayV2::Authorizer",
+   "Properties": {
+    "ApiId": {
+     "Ref": "ApiGateway11E7F47B"
+    },
+    "AuthorizerType": "JWT",
+    "IdentitySource": [
+     "$request.header.Authorization"
+    ],
+    "JwtConfiguration": {
+     "Audience": [
+      {
+       "Ref": "PhotologUserPoolPhotologAppClient2CE306BB"
+      }
+     ],
+     "Issuer": {
+      "Fn::Join": [
+       "",
+       [
+        "https://cognito-idp.",
+        {
+         "Ref": "AWS::Region"
+        },
+        ".amazonaws.com/",
+        {
+         "Ref": "PhotologUserPoolD3DA7D95"
+        }
+       ]
+      ]
+     }
+    },
+    "Name": "PhotologAuthorizer"
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/ApiGateway/PhotologAuthorizer/Resource"
    }
   },
   "PhotologUserPoolD3DA7D95": {
@@ -1255,7 +1300,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/+VWW0/bMBT+LfhxMhkFnvq0UrqBBiNrysNUIeTap6mHY2e+tIqs/PfJiRMCbBWaNm3Snuyc63c+H5/4OPHHp0fJ0QHZmUPKHg4FXyU+s4Q+YLIz996cJP7M0QewS4+Is+ocBFi4WX0Fag0aW+0Ao1Vj8YkUgMboDcKIKm3QOLgIoXbArsFuFAsi9GG2QBhdzCbn6A53+hvNcy5N9I7CCyAMdCus7zDSUKgtEakSnFZojBgYq1WFMNqCNlxJYC2gGntEGJsqbeZOwO8FghvNG3TXZHk1I68Hf4ena9lyjtuldVr6GDXiePo58GrNo+8ZMVBjQYoVI4mfrmUKuuAmZMTvnaSWK7n0AQ7VvAxfETDILddKFiBtlKyj+ZNzZt12QyQToLtynbQ8msXjmA0DLocs/tXkv6hs+O4IrDGrJCkUWyV+QVYClh6VRFselB+hQmOP5CNwW5Vhm4VmMkrb/RYrLgSX+XVbbTr5cp/O5vfz2efbWbbY21k2QOkJayE38GrMSZH4uWqQEmNcAeysAVFqLikviZhQqlxPf2sTHCa0P6cao4JIkgNrknNo7/xQVk10tO34XKi0S9FBXvqotZbQzaUUXEKv649ir3J/3P3aXy4/xr4e1vuPMvCfH/HPtc2lCEXjOGUDFx2UhQqaFwhfihnLLLEQhoR5kvbV4j+d9i+V9WNxQ3rLd43NyT0xBqxJJmHBQuUm8Vcq/6CVK5ceibh9nGT4R8ImaOdWY1LynFjYkWp73Pz4JiUPFpklOYTNpbSQaxJave0BZ6HGVOWSW5X4WwM6VUqEAdnekzlQtQVdofExRiUxZqd0f+s9Kri8ApnbTf/H/+a4hnOe88d3QRReqR1oSgw8k2dVsVLiufVtWQ6t630z34BYZzyXt+VMhlHP0HhNhAGMDM/lpZwITky4xR45A7r958SoLpb8jNOOCdxtpoKDDA/CzqGbIM5u3gu166OnkaSuniDLdNknzEGCJhYyoDo8ZCJS9yTPT9C0yrrGU2esKuZglNMU+j90c6ZR+Mwm1WrLGejwNsJN04Wm4DLHwyhNhBtnS2drPBqdJqNDIsoNSY4O3sXn8tuwDhstWvgLa8vQb2FtGy7smhZrdoPeq2ucVnaj5NuTZDRKRqcHXw3nh/ENk8zb9TsKT85cqQsAAA=="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/+VWS2/bOBD+LeGxYNQ4ycmnKo7bBJs0Wss5LIwgoMWxzIYitXzY0BL67wuKlKKkrREUu2iBnkjN85uPoyFPE3d6fpKcHJG9Pi7o0zFn68TlhhRPmOz1o9NnibuwxROYlUPEGnkJHAzcrb9AYTSaGmUBo3Vn8ZlUgKboHcKokEqjqXfhXO6B3oLZSupF6NN8iTC6mqeX6AH3+jvFSiZ09I7CKyAUVBC2DxgpqOSO8ExyVjRoiihoo2SDMNqB0kwKoAFQix0ilM6k0gvL4b8FgjvNO/TQZXkzI28H/4BnGxE4x2EJTisXo0YcLz9HXsE8+l4QDS3mpFpTkrjZRmSgKqZ9RvzRisIwKVbOwykUq/1XBAxix5QUFQgTJZto/uKcab/dEkE5qL5cKwyLZvE45uOAqzGLPzX5Dyo7vnsCW0wbQSpJ14lbkjWHlUM1UYZ55R/QoKlD4hm4aWq/zX0zaanMYYs145yJ8jZUm6V/PWbzxeNi/uf9PF8e7CzjoQyEBcgdvBYzUiVuITukRGtbAb3oQNSKiYLVhKdFIe1Af7DxDmkxnFOLUUUEKYF2yRmEf34sa1IVbXs+lzLrU/SQVy5qjSHF9lpwJmDQDUdxUHk47mHtD5cfY9+O6/1FGfjNj/j72u6n8EXjOGU9Fz2UpfSarxB+LaY0N8SAHxL6Rdo3i//vtD+prG+LO9ID3y3WZ49EazA6Sf2CuSx14m5k+UlJW68c4nH7PMnwt4Rd0N6txaRmJTGwJ83utLv40pp5i9yQEvzmWhgoFfGtHnrAmk6eWrOViv0DqsWFLAUzMnH3GlQmJffjMvw1CyjkDlSDpqcY1UTrvVTDDHCoYuIGRGm2w/3/t2UKLlnJnl8JUXgj96AKouGVPG+qteSvre/remzdHroBNPBNzkpxX8+FH/wUTTeEa8BIs1Jci5Qzov0/7ZDVoMINFKPaWPIrhnsmcL+ZcQbCPw97h36eWLP9yOV+iJ5Fkvp6vCxX9ZCwBAGKGMihUP5ZE5HaF3m+gyYo2xbPrDayWoCWVhUw3NfdCUfhK5tMyR2joPxLCXct6FuEiRKPo3QR7qyprWnxZHKeTI4Jr7ckOTn6EB/P7/06brto4a6MqX33+TW0n9+FhvO7cSd2ts8d2OKsMVsp3p8lk0kyOT/6ohk7jg+cZBHWfwE74ZSRxgsAAA=="
    },
    "Metadata": {
     "aws:cdk:path": "InfraStack/CDKMetadata/Default"

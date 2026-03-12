@@ -5,6 +5,8 @@ import { withAuthenticator, type WithAuthenticatorProps } from '@aws-amplify/ui-
 import '@aws-amplify/ui-react/styles.css'; // デフォルトのスタイル
 import { authConfig } from './amplify-config';
 
+import { fetchAuthSession } from 'aws-amplify/auth';
+
 // --- 型定義 ---
 interface Photo {
   S3Key: string;
@@ -58,7 +60,18 @@ function App({ signOut, user }: WithAuthenticatorProps) {
       try {
         // バックエンドが期待する "YYYY-MM" 形式を作成
         const monthStr = `${currentMonth.year}-${String(currentMonth.month).padStart(2, '0')}`;
-        const response = await fetch(`${API_BASE_URL}?userId=${USER_ID}&yearMonth=${monthStr}`);
+        // Cognitoのセッションからトークンを取得
+        const session = await fetchAuthSession();
+        const idToken = session.tokens?.idToken?.toString();
+
+        // 🟢 ヘッダーに Authorization を追加
+        const response = await fetch(`${API_BASE_URL}?userId=${USER_ID}&yearMonth=${monthStr}`, {
+          headers: {
+            'Authorization': `Bearer ${idToken}`
+          }
+        });
+
+        //const response = await fetch(`${API_BASE_URL}?userId=${USER_ID}&yearMonth=${monthStr}`);
         
         if (!response.ok) throw new Error("Network response was not ok");
         

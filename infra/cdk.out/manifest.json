@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/172c49a053818e97e96e8c09cf57740a2529e5be3031287be3f88438f5a48da7.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/0e8ebbeb892db4359fadc706dd62b7821dfa3f30bbfabe7c9c5273a592655325.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -708,6 +708,12 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "ApiGatewayGETphotos9F91333C"
+          }
+        ],
+        "/InfraStack/ApiGateway/PhotologAuthorizer/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiGatewayPhotologAuthorizer19FC7423"
           }
         ],
         "/InfraStack/PhotologUserPool": [
