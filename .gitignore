@@ -8,8 +8,9 @@ cdk.out/            # デプロイ用の自動生成ファイル
 package-lock.json
 *.egg-info
 
-# テストデータ
+# 画像や動画データそのもの
 test-data/
+real-data/
 
 
 # local_processor

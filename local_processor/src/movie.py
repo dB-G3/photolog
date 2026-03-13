@@ -5,6 +5,7 @@ from hachoir.parser import createParser
 from hachoir.metadata import extractMetadata
 
 import util
+import os
 
 VIDEOHEIGHT = "600"
 VIDEOQUALITY = "28"  # 画質設定（18〜28が一般的。数字が大きいほど高圧縮・低画質）
@@ -58,6 +59,11 @@ def extract_video_thumbnail(video_file, save_path, relative_path,  output_dir, s
     cap.release()
 
 def compress_video(input_path, output_path):
+    # 出力ファイルが既に存在するかチェック
+    if os.path.exists(output_path):
+        print(f"スキップ: 既に圧縮済みファイルが存在します: {output_path}")
+        return
+    
     cmd = [
         'ffmpeg', '-i', input_path,
         '-vcodec', 'libx264',  # H.264
@@ -76,6 +82,10 @@ def convert_to_mp4(input_path, output_path):
     """
     MOVなどの動画をChromeで再生可能なH.264/MP4形式に変換する
     """
+    # 出力ファイルが既に存在するかチェック
+    if os.path.exists(output_path):
+        print(f"スキップ: 既に圧縮済みファイルが存在します: {output_path}")
+        return
     print(f"変換中: {input_path} -> {output_path}")
     
     # ffmpegコマンドを構築
