@@ -15,9 +15,12 @@ import sys
 TARGET_WIDTH = 800
 TARGET_HEIGHT = 600
 BASE_DIR = "../"
-INPUT_DIR = os.path.join(BASE_DIR, "test-data/input")
-OUTPUT_DIR = os.path.join(BASE_DIR, "test-data/output")
-OUTPUT_ZIP_DIR = os.path.join(BASE_DIR, "test-data/output/zip")
+# INPUT_DIR = os.path.join(BASE_DIR, "test-data/input")
+# OUTPUT_DIR = os.path.join(BASE_DIR, "test-data/output")
+# OUTPUT_ZIP_DIR = os.path.join(BASE_DIR, "test-data/output/zip")
+INPUT_DIR = os.path.join(BASE_DIR, "real-data/input")
+OUTPUT_DIR = os.path.join(BASE_DIR, "real-data/output")
+OUTPUT_ZIP_DIR = os.path.join(BASE_DIR, "real-data/output/zip")
     
 def main():
     parser = argparse.ArgumentParser(description='Photolog Local Processor')

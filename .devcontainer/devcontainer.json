@@ -21,12 +21,15 @@
     "remoteUser": "vscode",
     "containerEnv": {
         "TZ": "Asia/Tokyo"
-    }
+    },
     "forwardPorts": [5173], // Viteローカルサーバのポート転送
     "portsAttributes": {
         "5173": {
           "label": "Vite Dev Server",
           "onAutoForward": "notify"
         }
-    }
+    },
+    "mounts": [ //実アップロードデータフォルダのマウント
+        "source=N:/download/megpict,target=/workspaces/photolog/local_processor/real-data,type=bind,consistency=cached"
+    ]
 }
