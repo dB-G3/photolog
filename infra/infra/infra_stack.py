@@ -6,6 +6,9 @@ from aws_cdk import (
     aws_dynamodb as dynamodb,
     aws_lambda as _lambda,
     aws_cognito as cognito,
+    aws_cloudfront as cloudfront,
+    aws_cloudfront_origins as origins,
+    aws_s3_deployment as s3_deploy,
     CfnOutput,
     RemovalPolicy,
     # aws_sqs as sqs,
@@ -17,6 +20,8 @@ import aws_cdk.aws_apigatewayv2_authorizers_alpha as authorizers
 
 from constructs import Construct
 import os
+
+from aws_cdk import aws_iam as iam
 
 class InfraStack(Stack):
 
@@ -124,7 +129,7 @@ class InfraStack(Stack):
             self, "ApiGateway",
             api_name="photolog-prod-apigateway-apigateway-yasu",
             cors_preflight=apigwv2.CorsPreflightOptions(
-                allow_origins=["*"], # 開発時は全て許可。ブラウザからのアクセスを拒否されないため。
+                allow_origins=["https://d3gzdo1y1g2u0b.cloudfront.net"], # 開発時は全て許可。ブラウザからのアクセスを拒否されないため。
                 allow_methods=[apigwv2.CorsHttpMethod.GET],
                 allow_headers=["Authorization", "Content-Type"],
             )
@@ -159,7 +164,17 @@ class InfraStack(Stack):
                 user_password=True,  # ID/PW認証を許可
                 user_srp=True
             ),
-            generate_secret=False  # フロントエンド用なのでシークレットは作らない
+            generate_secret=False,  # フロントエンド用なのでシークレットは作らない
+            # コールバック設定
+            o_auth=cognito.OAuthSettings(
+                flows=cognito.OAuthFlows(
+                    authorization_code_grant=True # 一般的なフロー
+                ),
+                callback_urls=[
+                    "http://localhost:5173",            # ローカル開発用
+                    "https://d3gzdo1y1g2u0b.cloudfront.net"       # CloudFrontのURL
+                ]
+            )
         )
 
         # 3. 後の設定で使うIDを出力
@@ -188,3 +203,46 @@ class InfraStack(Stack):
             ),
             authorizer=auth # CognitoのIDトークン経由で認証
         )
+
+
+        # --- フロントエンド用 S3 バケット ---
+        frontend_bucket = s3.Bucket(self, "FrontendBucket",
+            bucket_name="photolog-prod-s3-frontend-yasu",
+            website_index_document="index.html",
+            encryption=s3.BucketEncryption.S3_MANAGED,
+            removal_policy=RemovalPolicy.DESTROY, 
+            auto_delete_objects=True,
+            block_public_access=s3.BlockPublicAccess.BLOCK_ALL # ブロックパブリックアクセス
+        )
+        
+        # CloudFront
+        distribution = cloudfront.Distribution(self, "FrontendDistribution",
+            default_behavior=cloudfront.BehaviorOptions(
+                # 🟢 S3BucketOrigin.with_origin_access_control を使うのが現代の正解です
+                origin=origins.S3BucketOrigin.with_origin_access_control(frontend_bucket),
+                viewer_protocol_policy=cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+                cache_policy=cloudfront.CachePolicy.CACHING_OPTIMIZED
+            ),
+            default_root_object="index.html",
+            error_responses=[
+                cloudfront.ErrorResponse(
+                    http_status=404,
+                    response_http_status=200,
+                    response_page_path="/index.html"
+                )
+            ]
+        )
+
+        # --- ビルド済みファイルを S3 へ自動アップロード ---
+        s3_deploy.BucketDeployment(self, "DeployFrontend",
+            sources=[s3_deploy.Source.asset("../frontend/dist")], # distフォルダの場所を確認
+            destination_bucket=frontend_bucket,
+            distribution=distribution, # デプロイ完了時にCloudFrontのキャッシュを自動クリア
+            distribution_paths=["/*"]
+        )
+
+        # 公開URLを出力
+        CfnOutput(self, "CloudFrontURL", value=f"https://{distribution.distribution_domain_name}")
+
+
+        

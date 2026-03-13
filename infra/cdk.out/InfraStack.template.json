@@ -1059,7 +1059,7 @@
       "GET"
      ],
      "AllowOrigins": [
-      "*"
+      "https://d3gzdo1y1g2u0b.cloudfront.net"
      ]
     },
     "Name": "photolog-prod-apigateway-apigateway-yasu",
@@ -1265,7 +1265,6 @@
    "Type": "AWS::Cognito::UserPoolClient",
    "Properties": {
     "AllowedOAuthFlows": [
-     "implicit",
      "code"
     ],
     "AllowedOAuthFlowsUserPoolClient": true,
@@ -1277,7 +1276,8 @@
      "aws.cognito.signin.user.admin"
     ],
     "CallbackURLs": [
-     "https://example.com"
+     "http://localhost:5173",
+     "https://d3gzdo1y1g2u0b.cloudfront.net"
     ],
     "ClientName": "photolog-prod-userPoolClient-reactApp-yasu",
     "ExplicitAuthFlows": [
@@ -1297,10 +1297,554 @@
     "aws:cdk:path": "InfraStack/PhotologUserPool/PhotologAppClient/Resource"
    }
   },
+  "FrontendBucketEFE2E19C": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketEncryption": {
+     "ServerSideEncryptionConfiguration": [
+      {
+       "ServerSideEncryptionByDefault": {
+        "SSEAlgorithm": "AES256"
+       }
+      }
+     ]
+    },
+    "BucketName": "photolog-prod-s3-frontend-yasu",
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    },
+    "Tags": [
+     {
+      "Key": "aws-cdk:auto-delete-objects",
+      "Value": "true"
+     },
+     {
+      "Key": "aws-cdk:cr-owned:9753f6ef",
+      "Value": "true"
+     },
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Owner",
+      "Value": "yasu"
+     },
+     {
+      "Key": "Project",
+      "Value": "photolog"
+     }
+    ],
+    "WebsiteConfiguration": {
+     "IndexDocument": "index.html"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/FrontendBucket/Resource"
+   }
+  },
+  "FrontendBucketPolicy1DFF75D9": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "FrontendBucketEFE2E19C"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:DeleteObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:PutBucketPolicy"
+       ],
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::GetAtt": [
+          "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+          "Arn"
+         ]
+        }
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "FrontendBucketEFE2E19C",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "FrontendBucketEFE2E19C",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": "s3:GetObject",
+       "Condition": {
+        "StringEquals": {
+         "AWS:SourceArn": {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":cloudfront::",
+            {
+             "Ref": "AWS::AccountId"
+            },
+            ":distribution/",
+            {
+             "Ref": "FrontendDistributionE6EAF405"
+            }
+           ]
+          ]
+         }
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "cloudfront.amazonaws.com"
+       },
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          {
+           "Fn::GetAtt": [
+            "FrontendBucketEFE2E19C",
+            "Arn"
+           ]
+          },
+          "/*"
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/FrontendBucket/Policy/Resource"
+   }
+  },
+  "FrontendBucketAutoDeleteObjectsCustomResourceDB860B32": {
+   "Type": "Custom::S3AutoDeleteObjects",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
+      "Arn"
+     ]
+    },
+    "BucketName": {
+     "Ref": "FrontendBucketEFE2E19C"
+    }
+   },
+   "DependsOn": [
+    "FrontendBucketPolicy1DFF75D9"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/FrontendBucket/AutoDeleteObjectsCustomResource/Default"
+   }
+  },
+  "FrontendDistributionOrigin1S3OriginAccessControl51A3EFC6": {
+   "Type": "AWS::CloudFront::OriginAccessControl",
+   "Properties": {
+    "OriginAccessControlConfig": {
+     "Name": "InfraStackFrontendDistributiOrigin1S3OriginAccessControl43DA78FE",
+     "OriginAccessControlOriginType": "s3",
+     "SigningBehavior": "always",
+     "SigningProtocol": "sigv4"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/FrontendDistribution/Origin1/S3OriginAccessControl/Resource"
+   }
+  },
+  "FrontendDistributionE6EAF405": {
+   "Type": "AWS::CloudFront::Distribution",
+   "Properties": {
+    "DistributionConfig": {
+     "CustomErrorResponses": [
+      {
+       "ErrorCode": 404,
+       "ResponseCode": 200,
+       "ResponsePagePath": "/index.html"
+      }
+     ],
+     "DefaultCacheBehavior": {
+      "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+      "Compress": true,
+      "TargetOriginId": "InfraStackFrontendDistributionOrigin1DD9B345C",
+      "ViewerProtocolPolicy": "redirect-to-https"
+     },
+     "DefaultRootObject": "index.html",
+     "Enabled": true,
+     "HttpVersion": "http2",
+     "IPV6Enabled": true,
+     "Origins": [
+      {
+       "DomainName": {
+        "Fn::GetAtt": [
+         "FrontendBucketEFE2E19C",
+         "RegionalDomainName"
+        ]
+       },
+       "Id": "InfraStackFrontendDistributionOrigin1DD9B345C",
+       "OriginAccessControlId": {
+        "Fn::GetAtt": [
+         "FrontendDistributionOrigin1S3OriginAccessControl51A3EFC6",
+         "Id"
+        ]
+       },
+       "S3OriginConfig": {
+        "OriginAccessIdentity": ""
+       }
+      }
+     ]
+    },
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Owner",
+      "Value": "yasu"
+     },
+     {
+      "Key": "Project",
+      "Value": "photolog"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/FrontendDistribution/Resource"
+   }
+  },
+  "DeployFrontendAwsCliLayerD774ED8F": {
+   "Type": "AWS::Lambda::LayerVersion",
+   "Properties": {
+    "Content": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "0cfdecad2260a3a84ad0c2d08a77e03c9d25e26c7b52f26b1e1faf97aef92f18.zip"
+    },
+    "Description": "/opt/awscli/aws"
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/DeployFrontend/AwsCliLayer/Resource",
+    "aws:asset:path": "asset.0cfdecad2260a3a84ad0c2d08a77e03c9d25e26c7b52f26b1e1faf97aef92f18.zip",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Content"
+   }
+  },
+  "DeployFrontendCustomResource3E02C3B7": {
+   "Type": "Custom::CDKBucketDeployment",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+      "Arn"
+     ]
+    },
+    "SourceBucketNames": [
+     {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     }
+    ],
+    "SourceObjectKeys": [
+     "5521b13a41f6b5213e20d65141e0b2526fb182ca38ebb96cf7334c484dfab357.zip"
+    ],
+    "DestinationBucketName": {
+     "Ref": "FrontendBucketEFE2E19C"
+    },
+    "WaitForDistributionInvalidation": true,
+    "Prune": true,
+    "DistributionId": {
+     "Ref": "FrontendDistributionE6EAF405"
+    },
+    "DistributionPaths": [
+     "/*"
+    ],
+    "OutputObjectKeys": true
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/DeployFrontend/CustomResource/Default"
+   }
+  },
+  "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Owner",
+      "Value": "yasu"
+     },
+     {
+      "Key": "Project",
+      "Value": "photolog"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/Resource"
+   }
+  },
+  "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:GetBucket*",
+        "s3:GetObject*",
+        "s3:List*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::",
+           {
+            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+           },
+           "/*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::",
+           {
+            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+           }
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:Abort*",
+        "s3:DeleteObject*",
+        "s3:GetBucket*",
+        "s3:GetObject*",
+        "s3:List*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "FrontendBucketEFE2E19C",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "FrontendBucketEFE2E19C",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "cloudfront:CreateInvalidation",
+        "cloudfront:GetInvalidation"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+    "Roles": [
+     {
+      "Ref": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "3423a042b818e31c1e34a19d6689ab2e5f9b70fcbe9e71df66f241b20a200bd9.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "AWS_CA_BUNDLE": "/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem"
+     }
+    },
+    "Handler": "index.handler",
+    "Layers": [
+     {
+      "Ref": "DeployFrontendAwsCliLayerD774ED8F"
+     }
+    ],
+    "Role": {
+     "Fn::GetAtt": [
+      "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.13",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Owner",
+      "Value": "yasu"
+     },
+     {
+      "Key": "Project",
+      "Value": "photolog"
+     }
+    ],
+    "Timeout": 900
+   },
+   "DependsOn": [
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Resource",
+    "aws:asset:path": "asset.3423a042b818e31c1e34a19d6689ab2e5f9b70fcbe9e71df66f241b20a200bd9",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CLogGroup817B64E9": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 731,
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Owner",
+      "Value": "yasu"
+     },
+     {
+      "Key": "Project",
+      "Value": "photolog"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "InfraStack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/LogGroup/Resource"
+   }
+  },
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/+VWS2/bOBD+LeGxYNQ4ycmnKo7bBJs0Wss5LIwgoMWxzIYitXzY0BL67wuKlKKkrREUu2iBnkjN85uPoyFPE3d6fpKcHJG9Pi7o0zFn68TlhhRPmOz1o9NnibuwxROYlUPEGnkJHAzcrb9AYTSaGmUBo3Vn8ZlUgKboHcKokEqjqXfhXO6B3oLZSupF6NN8iTC6mqeX6AH3+jvFSiZ09I7CKyAUVBC2DxgpqOSO8ExyVjRoiihoo2SDMNqB0kwKoAFQix0ilM6k0gvL4b8FgjvNO/TQZXkzI28H/4BnGxE4x2EJTisXo0YcLz9HXsE8+l4QDS3mpFpTkrjZRmSgKqZ9RvzRisIwKVbOwykUq/1XBAxix5QUFQgTJZto/uKcab/dEkE5qL5cKwyLZvE45uOAqzGLPzX5Dyo7vnsCW0wbQSpJ14lbkjWHlUM1UYZ55R/QoKlD4hm4aWq/zX0zaanMYYs145yJ8jZUm6V/PWbzxeNi/uf9PF8e7CzjoQyEBcgdvBYzUiVuITukRGtbAb3oQNSKiYLVhKdFIe1Af7DxDmkxnFOLUUUEKYF2yRmEf34sa1IVbXs+lzLrU/SQVy5qjSHF9lpwJmDQDUdxUHk47mHtD5cfY9+O6/1FGfjNj/j72u6n8EXjOGU9Fz2UpfSarxB+LaY0N8SAHxL6Rdo3i//vtD+prG+LO9ID3y3WZ49EazA6Sf2CuSx14m5k+UlJW68c4nH7PMnwt4Rd0N6txaRmJTGwJ83utLv40pp5i9yQEvzmWhgoFfGtHnrAmk6eWrOViv0DqsWFLAUzMnH3GlQmJffjMvw1CyjkDlSDpqcY1UTrvVTDDHCoYuIGRGm2w/3/t2UKLlnJnl8JUXgj96AKouGVPG+qteSvre/remzdHroBNPBNzkpxX8+FH/wUTTeEa8BIs1Jci5Qzov0/7ZDVoMINFKPaWPIrhnsmcL+ZcQbCPw97h36eWLP9yOV+iJ5Fkvp6vCxX9ZCwBAGKGMihUP5ZE5HaF3m+gyYo2xbPrDayWoCWVhUw3NfdCUfhK5tMyR2joPxLCXct6FuEiRKPo3QR7qyprWnxZHKeTI4Jr7ckOTn6EB/P7/06brto4a6MqX33+TW0n9+FhvO7cSd2ts8d2OKsMVsp3p8lk0kyOT/6ohk7jg+cZBHWfwE74ZSRxgsAAA=="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/+1YX2/bNhD/LOVjwahN0ic/zbHdNFjSalYyYDCCgKbOMhuKp/GPPVXQdx8oUoqaNl5XdGix7Un03fHud8fj8c4nSXPy6mXy8hnbmyOe3x9JsU6azDJ+T9ne3DXmNGnOHL8Hu2oIcxbnIMHCu/V74NaQidUOKFl3Em9ZCWRCnhNKOGpDJn6LlLiH/ArsFnNPIueLa0LJm8V0Tm5pz3+nRSGUibsj8Q2wHHQgtreUaChxx2SKUvCaTEgOxmqsCSU70EaggjwAamlDWJ7PUJulk/BtgdCO85zcdla+OCJ/D/yTaiXy+9StpeBTzsH0QD8xB4rrurICFZmQ7PTuavp2er6YHwSyh7URFi5UDn/MkbsSlO2DP9uokAY0fML2VRMtx9Ac/DlSEnZHVWfMQEslK9c5S5rZRqWgS2F8TOhrp7h3YtV4nFyL3qXg405oVANMSjZR/KNMzPvllqlcgu4PxCkrolhMmMVY4Wp8zt/V+NczJau7vPXE289h9iDQ9b80yh5uCSXqOhMfhoSqtlCCZjKzqFkBI9au4g+rzK0V2D4vDXCnha3PNbqqJ26EBFMbC2UkSCw6gW8dtcux+yH/+oTy6479a7h9NBOqkGBRjVLOOZH3EP8qkiF/U6crNPBvie4VWJYzy2JofQ26/TwrRLilea1Yifk6aa7ZWsKqIRXTVviA/gw1mTREPVwPW1d+mfmialDbwxJrIaVQxVXAn05/u0sXy7vl4pebRXZ9sLBZD2W4liEROngtFaxMmiV2SJkxroT8rANRaaG4qJicco5uOOYg4zdM+VANWkpKplgBeWdcQHj7xrR6qqNsH8BrTHsTPeRVE7nWMr69UFIoGHhDXh9kHtZ7mPvV7vcpMfb3B43Af/yI/w/OE9yuJni3aOxsvLe9sWtcdrX7EYZPyXmeWWbBPwvmI7NfTP6nzX4nt34oNN1Zh2NuqTm9a5gxYE0y9R+aQyWx9vJJ6E/nA6GlEguTNJfxRV01w+P68LrQLyZ2OHpdLWWVKJiFPat3J10fPK2El8gsK8AvLpSFQrO+fVmisx196uwWtfgAuqUcCyUsJs2NAZ0iSv+uhRu8BI470DWZnFBSMWP2qIdi3ZBSqEtQhd0OA8vvTmiYi0I8zB+ReIl70Jz5RucjelaXa5SPpW+qaizdHnqqDchNJgp1Uy2Uf6FzMtkwaYASIwp1oaZSMOPrS0OcAR1ahajVRZcfRbiPBO0XMylA+Xm239DXNme3ryXuB+1pDFLvj6dluhoMFqBAMwsZcO2nnIgU/YF4HZxJuWb8/kbLoTvr9bN4aN1xzjCHc818le1Uj5wJYJ9wKTBbyiW6fKNR2aSZC2O1WLthbNowJ+0ZbNlOoA6w+HYonaGzFLAHnWq0yPHhWDTkQgO3RxaPttZWhlCC3YDcl/2ofYlow6Ta97Nao16CqVCZ+Bp4Bf4qOjMkWGC/eYqRsgJSFhOyu7fZaZjPw+w7Q2U1ytCSzzbqMzxPHgekbenMGYvlEgw6zaFvXoepvrtZkflINtW4EzloP7DSrlj4qylUQcfaAhRnK2fjUHvXDQ93bG+4FMl0b2ZSdLNHKFLHx6+S4yMmqy1LXj77Kf4T88J/xyUhSjQ+XL4yxLAV0K1CMfCrcZXoZB+qQ0vT2m5RvThNjo+T41fP3hshjmLfnyzD90+/MvYBExIAAA=="
    },
    "Metadata": {
     "aws:cdk:path": "InfraStack/CDKMetadata/Default"
@@ -1317,6 +1861,22 @@
   "AppClientId": {
    "Value": {
     "Ref": "PhotologUserPoolPhotologAppClient2CE306BB"
+   }
+  },
+  "CloudFrontURL": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Fn::GetAtt": [
+        "FrontendDistributionE6EAF405",
+        "DomainName"
+       ]
+      }
+     ]
+    ]
    }
   }
  },
