@@ -85,7 +85,7 @@ def convert_to_mp4(input_path, output_path):
     # 出力ファイルが既に存在するかチェック
     if os.path.exists(output_path):
         print(f"スキップ: 既に圧縮済みファイルが存在します: {output_path}")
-        return
+        return output_path
     print(f"変換中: {input_path} -> {output_path}")
     
     # ffmpegコマンドを構築
