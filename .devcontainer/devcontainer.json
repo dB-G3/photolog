@@ -1,15 +1,8 @@
 {
     "name": "Photolog",
-    "build": {
-        "dockerfile": "Dockerfile",
-        "context": "."
-    },
-    // photolog フォルダをコンテナのルートとして認識させる
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "app",
     "workspaceFolder": "/workspaces/photolog",
-    "runArgs": [
-        "--env-file", ".env",
-        "--label", "my-app=photolog"
-    ],
     "customizations": {
         "vscode": {
             "extensions": [
@@ -19,17 +12,12 @@
         }
     },
     "remoteUser": "vscode",
-    "containerEnv": {
-        "TZ": "Asia/Tokyo"
-    },
-    "forwardPorts": [5173], // Viteローカルサーバのポート転送
+    "forwardPorts": [5173],
     "portsAttributes": {
         "5173": {
           "label": "Vite Dev Server",
           "onAutoForward": "notify"
         }
-    },
-    "mounts": [ //実アップロードデータフォルダのマウント
-        "source=N:/download/megpict,target=/workspaces/photolog/local_processor/real-data,type=bind,consistency=cached"
-    ]
+    }
+    // "mounts" は削除（docker-compose.yml の volumes で管理するため）
 }

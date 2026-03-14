@@ -1,12 +1,17 @@
 services:
-  # 画像の加工・S3/DynamoDBへの登録を担うサービス
-  photo-processor:
-    build: .
-    container_name: photo-processor
+  app:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+    tty: true          # コンテナを終了させずに維持する
+    stdin_open: true   # 標準入力を開いたままにする
     volumes:
-      - .:/app
+      # プロジェクト本体のマウント（VS Codeが自動で行う分を明示的に書く場合）
+      - .:/workspaces/photolog:cached
+      # 環境によって変わる実データフォルダのマウント
+      # 指定がない場合はカレントディレクトリの dummy フォルダを指す
+      - ${REAL_DATA_SOURCE:-./dummy}:/workspaces/photolog/local_processor/real-data:cached
+    # devcontainer.json の runArgs や containerEnv の内容をこちらに移設可能
     environment:
-      - PYTHONUNBUFFERED=1
-      # 今後、AWSの認証情報を入れるための準備
-      - AWS_ENV=local
-    tty: true
+      - TZ=Asia/Tokyo
+    network_mode: bridge
