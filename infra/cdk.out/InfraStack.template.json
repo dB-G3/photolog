@@ -612,7 +612,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "57dd2969b1b9dfc788579d9afcaaa450fbe3b0005c341f346e1f54c11b4469ce.zip"
+     "S3Key": "e52dcfa280589c2cd2bf970574eef5ad2b833b69af8cfc99363e6601f07bad36.zip"
     },
     "Description": "S3に画像がアップロードされた際にメタデータをDynamoDBに登録するLambda",
     "Environment": {
@@ -652,7 +652,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "InfraStack/S3MetaHandler/Resource",
-    "aws:asset:path": "asset.57dd2969b1b9dfc788579d9afcaaa450fbe3b0005c341f346e1f54c11b4469ce",
+    "aws:asset:path": "asset.e52dcfa280589c2cd2bf970574eef5ad2b833b69af8cfc99363e6601f07bad36",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -960,7 +960,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "57dd2969b1b9dfc788579d9afcaaa450fbe3b0005c341f346e1f54c11b4469ce.zip"
+     "S3Key": "e52dcfa280589c2cd2bf970574eef5ad2b833b69af8cfc99363e6601f07bad36.zip"
     },
     "Description": "写真を取得するAPI",
     "Environment": {
@@ -1006,7 +1006,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "InfraStack/ApiGetPhotosHandler/Resource",
-    "aws:asset:path": "asset.57dd2969b1b9dfc788579d9afcaaa450fbe3b0005c341f346e1f54c11b4469ce",
+    "aws:asset:path": "asset.e52dcfa280589c2cd2bf970574eef5ad2b833b69af8cfc99363e6601f07bad36",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }

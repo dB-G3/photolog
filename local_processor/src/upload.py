@@ -18,15 +18,15 @@ def upload_thumbnail_with_metadata(file_path, bucket_name, object_name, user_id,
     s3_client = boto3.client('s3')
 
     # S3上の既存チェック
-    try:
-        s3_client.head_object(Bucket=bucket_name, Key=object_name)
-        print(f"スキップ: S3に既に存在します: s3://{bucket_name}/{object_name}")
-        return True
-    except ClientError as e:
-        # 404 エラー (NotFound) であれば存在しないのでアップロードを続行
-        if e.response['Error']['Code'] != '404':
-            # 404以外（権限エラーなど）は再送すべきでないため例外を出す
-            raise e
+    # try:
+    #     s3_client.head_object(Bucket=bucket_name, Key=object_name)
+    #     print(f"スキップ: S3に既に存在します: s3://{bucket_name}/{object_name}")
+    #     return True
+    # except ClientError as e:
+    #     # 404 エラー (NotFound) であれば存在しないのでアップロードを続行
+    #     if e.response['Error']['Code'] != '404':
+    #         # 404以外（権限エラーなど）は再送すべきでないため例外を出す
+    #         raise e
 
     try:
         # メタデータを定義 (x-amz-meta- は自動付与される)

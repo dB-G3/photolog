@@ -17,7 +17,7 @@ import shutil
 TARGET_WIDTH = 800
 TARGET_HEIGHT = 600
 BASE_DIR = "../"
-ENV = "dev"
+ENV = "prod"
 
 if ENV == "dev":
     INPUT_DIR = os.path.join(BASE_DIR, "test-data/input")
