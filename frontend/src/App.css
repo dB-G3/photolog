@@ -40,3 +40,22 @@
 .read-the-docs {
   color: #888;
 }
+
+/* モバイル（画面幅が 768px 以下）の場合の設定 */
+@media (max-width: 768px) {
+  .month-nav-container {
+    position: fixed;
+    bottom: 20px; /* 画面下から少し浮かせる */
+    left: 50%;
+    transform: translateX(-50%); /* 中央寄せ */
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background-color: rgba(255, 255, 255, 0.9); /* 少し透ける白 */
+    padding: 10px 20px;
+    border-radius: 30px; /* 角丸でボタンっぽく */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* 浮いている感じを出す */
+    z-index: 1000; /* 画像より上に表示 */
+    width: fit-content;
+  }
+}
