@@ -29,7 +29,7 @@
           "onAutoForward": "notify"
         }
     },
-    "mounts": [ //実アップロードデータフォルダのマウント
-        "source=N:/download/megpict,target=/workspaces/photolog/local_processor/real-data,type=bind,consistency=cached"
-    ]
+    //"mounts": [ //実アップロードデータフォルダのマウント
+    //    "source=N:/download/megpict,target=/workspaces/photolog/local_processor/real-data,type=bind,consistency=cached"
+    //]
 }

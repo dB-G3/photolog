@@ -11,16 +11,20 @@ import upload
 import argparse
 import sys
 
+import shutil
+
 
 TARGET_WIDTH = 800
 TARGET_HEIGHT = 600
 BASE_DIR = "../"
-# INPUT_DIR = os.path.join(BASE_DIR, "test-data/input")
-# OUTPUT_DIR = os.path.join(BASE_DIR, "test-data/output")
-# OUTPUT_ZIP_DIR = os.path.join(BASE_DIR, "test-data/output/zip")
-INPUT_DIR = os.path.join(BASE_DIR, "real-data/input")
-OUTPUT_DIR = os.path.join(BASE_DIR, "real-data/output")
-OUTPUT_ZIP_DIR = os.path.join(BASE_DIR, "real-data/output/zip")
+INPUT_DIR = os.path.join(BASE_DIR, "test-data/input")
+OUTPUT_DIR = os.path.join(BASE_DIR, "test-data/output")
+OUTPUT_DIR_ORIGINAL = os.path.join(BASE_DIR, "test-data/output/original")
+OUTPUT_ZIP_DIR = os.path.join(BASE_DIR, "test-data/output/zip")
+# INPUT_DIR = os.path.join(BASE_DIR, "real-data/input")
+# OUTPUT_DIR = os.path.join(BASE_DIR, "real-data/output")
+# OUTPUT_DIR_ORIGINAL = os.path.join(BASE_DIR, "real-data/output/original")
+# OUTPUT_ZIP_DIR = os.path.join(BASE_DIR, "real-data/output/zip")
     
 def main():
     parser = argparse.ArgumentParser(description='Photolog Local Processor')
@@ -67,6 +71,11 @@ def main():
                 temp_dir = Path(OUTPUT_DIR) / dir_name
                 temp_dir.mkdir(parents=True, exist_ok=True)
                 save_path_pict = temp_dir / relative_path.name
+                # オリジナルデータを日付フォルダにコピー
+                temp_dir2 = Path(OUTPUT_DIR_ORIGINAL) / dir_name
+                temp_dir2.mkdir(parents=True, exist_ok=True)
+                save_path_pict_original = temp_dir2 / relative_path.name
+                util.copy_original_image(img_file, save_path_pict_original.parent)
                 
                 #ファイルの圧縮
                 ret = picture.process_image(img_file, TARGET_WIDTH, TARGET_HEIGHT, save_path_pict, relative_path, OUTPUT_DIR)
@@ -103,7 +112,12 @@ def main():
                 temp_dir.mkdir(parents=True, exist_ok=True)
                 save_path_video = temp_dir / relative_path.name
                 save_path_video_thumbnail = temp_dir / relative_path.name
-                
+                # オリジナルデータを日付フォルダにコピー
+                temp_dir2 = Path(OUTPUT_DIR_ORIGINAL) / dir_name
+                temp_dir2.mkdir(parents=True, exist_ok=True)
+                save_path_video_original = temp_dir2 / relative_path.name
+                util.copy_original_image(img_file, save_path_video_original.parent)
+
                 print(f"動画処理開始: {relative_path}")
                 #print(save_path_video)
                 if img_file.suffix.lower() in [".mov"]:
@@ -138,18 +152,34 @@ def main():
             util.output_log(OUTPUT_DIR, "処理スキップ：" + str(img_file.relative_to(input_path)))
 
     print('Zip圧縮開始')
-    tmp_path = Path(OUTPUT_DIR)
-    # tmp直下にあるフォルダだけを対象にする
-    zip_dir = Path(OUTPUT_ZIP_DIR) / dir_name
-    zip_dir.mkdir(parents=True, exist_ok=True)
-    for date_dir in tmp_path.iterdir():
-        print(date_dir.name)
-        if(date_dir.name == os.path.basename(OUTPUT_ZIP_DIR)):
+    
+    # 1. 圧縮したいフォルダたちが並んでいる親フォルダ
+    original_root = Path(OUTPUT_DIR_ORIGINAL)
+    
+    # 2. 出来上がったZipを保存する専用のフォルダ（階層を分ける）
+    # 例: ../test-data/output/zip_archives/
+    zip_store_dir = Path(OUTPUT_ZIP_DIR)
+    zip_store_dir.mkdir(parents=True, exist_ok=True)
+
+    for date_dir in original_root.iterdir():
+        # フォルダ以外、またはもしzipフォルダが紛れ込んでいてもスキップ
+        if not date_dir.is_dir() or date_dir.name == "zip":
             continue
-        if date_dir.is_dir():
-            # フォルダをZipに圧縮
-            zip_path = os.path.join(OUTPUT_ZIP_DIR, date_dir.name)
-            zip_file = util.zip_directory(zip_path, date_dir)
+            
+        print(f"圧縮処理中: {date_dir.name}")
+
+        # 出力先の指定
+        zip_output_path = zip_store_dir / date_dir.name
+        
+        # base_name: 作成するzipのパス
+        # format: 'zip'
+        # root_dir: 圧縮したいフォルダ（date_dir）
+        shutil.make_archive(
+            base_name=str(zip_output_path), 
+            format='zip', 
+            root_dir=str(date_dir)
+        )
+
     print('Zip圧縮完了')
 
 if __name__ == "__main__":
