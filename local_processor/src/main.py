@@ -17,14 +17,21 @@ import shutil
 TARGET_WIDTH = 800
 TARGET_HEIGHT = 600
 BASE_DIR = "../"
-INPUT_DIR = os.path.join(BASE_DIR, "test-data/input")
-OUTPUT_DIR = os.path.join(BASE_DIR, "test-data/output")
-OUTPUT_DIR_ORIGINAL = os.path.join(BASE_DIR, "test-data/output/original")
-OUTPUT_ZIP_DIR = os.path.join(BASE_DIR, "test-data/output/zip")
-# INPUT_DIR = os.path.join(BASE_DIR, "real-data/input")
-# OUTPUT_DIR = os.path.join(BASE_DIR, "real-data/output")
-# OUTPUT_DIR_ORIGINAL = os.path.join(BASE_DIR, "real-data/output/original")
-# OUTPUT_ZIP_DIR = os.path.join(BASE_DIR, "real-data/output/zip")
+ENV = "dev"
+
+if ENV == "dev":
+    INPUT_DIR = os.path.join(BASE_DIR, "test-data/input")
+    OUTPUT_DIR = os.path.join(BASE_DIR, "test-data/output")
+    OUTPUT_DIR_ORIGINAL = os.path.join(BASE_DIR, "test-data/output/original")
+    OUTPUT_ZIP_DIR = os.path.join(BASE_DIR, "test-data/output/zip")
+elif ENV == "prod":
+    INPUT_DIR = os.path.join(BASE_DIR, "real-data/input")
+    OUTPUT_DIR = os.path.join(BASE_DIR, "real-data/output")
+    OUTPUT_DIR_ORIGINAL = os.path.join(BASE_DIR, "real-data/output/original")
+    OUTPUT_ZIP_DIR = os.path.join(BASE_DIR, "real-data/output/zip")
+else:
+    print("環境変数 ENV は prod か dev を指定してください")
+    sys.exit(1)
     
 def main():
     parser = argparse.ArgumentParser(description='Photolog Local Processor')
