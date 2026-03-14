@@ -10,6 +10,7 @@ from aws_cdk import (
     aws_cloudfront_origins as origins,
     aws_s3_deployment as s3_deploy,
     CfnOutput,
+    Duration,
     RemovalPolicy,
     # aws_sqs as sqs,
 )
@@ -119,6 +120,7 @@ class InfraStack(Stack):
                 "THUMBNAIL_BUCKET_NAME_YASU": bucket_yasu.bucket_name, # サムネイルバケット名を環境変数で渡す
                 "THUMBNAIL_BUCKET_NAME_MEGU": bucket_megu.bucket_name  # あまりいい作りではない
             },
+            timeout=Duration.seconds(900), # 最大値900秒
         )
         table.grant_read_data(api_handler) # LambdaにDynamoDB読み込み権限を付与
         bucket_yasu.grant_read(api_handler) # LambdaにS3読み取り権限を付与

@@ -90,26 +90,56 @@ function App({ signOut, user }: WithAuthenticatorProps) {
 
   return (
     <div style={containerStyle}>
-      <header style={headerStyle}>
-        <h1 style={{ margin: 0 }}>📸 {user?.username}のPhotolog</h1>
-        <button 
-          onClick={signOut} 
-          style={{ 
-            padding: '8px 16px', 
-            cursor: 'pointer',
-            borderRadius: '4px',
-            border: 'none',
-            backgroundColor: '#ef5350',
-            color: 'white'
-          }}
-        >
-          ログアウト
-        </button>
+      <header style={{
+        ...headerStyle,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '15px',
+        padding: '15px',
+        backgroundColor: '#222',
+        borderBottom: '1px solid #aaa',
+        position: 'sticky',
+        top: 0,
+        zIndex: 1000
+        }}>
+        {/* 1段目: タイトルとログアウトを左右に振る */}
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          width: '100%' 
+        }}>
+          <h1 style={{ margin: 0, fontSize: '1.5rem' }}>📸 {user?.username}のPhotolog</h1>
+          <button 
+            onClick={signOut} 
+            style={{ 
+              padding: '8px 16px', 
+              cursor: 'pointer',
+              borderRadius: '4px',
+              border: 'none',
+              backgroundColor: '#ef5350',
+              color: 'white',
+              whiteSpace: 'nowrap' // 改行防止
+            }}
+          >
+            ログアウト
+          </button>
+        </div>
         
-        <div style={navStyle}>
+        {/* 2段目: 操作パネル（中央寄せ） */}
+        <div style={{ 
+          ...navStyle, 
+          display: 'flex', 
+          justifyContent: 'center', 
+          flexWrap: 'wrap', // 幅が足りない時はさらに折り返す
+          gap: '8px',
+          width: '100%'
+        }}>
           <button onClick={() => changeYear(-1)} style={buttonStyle}>◀ 前年</button>
           <button onClick={() => changeMonth(-1)} style={buttonStyle}>◀ 前月</button>
-          <span style={monthDisplayStyle}>{currentMonth.year}年 {currentMonth.month}月</span>
+          <span style={{...monthDisplayStyle, minWidth: '100px', textAlign: 'center'}}>
+            {currentMonth.year}年 {currentMonth.month}月
+          </span>
           <button onClick={() => changeMonth(1)} style={buttonStyle}>次月 ▶</button>
           <button onClick={() => changeYear(1)} style={buttonStyle}>次年 ▶</button>
         </div>
@@ -199,10 +229,10 @@ const isVideo = (url: string) => {
 
 // --- スタイル定義（Tailwind未導入のためJSオブジェクトで定義） ---
 const containerStyle: React.CSSProperties = { padding: '20px', maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'stretch' };
-const headerStyle: React.CSSProperties = { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', borderBottom: '2px solid #eee', paddingBottom: '10px' };
+const headerStyle: React.CSSProperties = { display: 'flex', fontSize: '1.5rem', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', borderBottom: '2px solid #eee', paddingBottom: '10px' };
 const navStyle: React.CSSProperties = { display: 'flex', alignItems: 'center', gap: '20px' };
-const buttonStyle: React.CSSProperties = { padding: '8px 16px', cursor: 'pointer', borderRadius: '4px', border: '1px solid #ccc', background: '#999' };
-const monthDisplayStyle: React.CSSProperties = { fontSize: '1.2rem', fontWeight: 'bold', minWidth: '120px', textAlign: 'center' };
+const buttonStyle: React.CSSProperties = { padding: '8px 16px', cursor: 'pointer', fontSize: '1.5rem', borderRadius: '4px', border: '1px solid #ccc', background: '#999' };
+const monthDisplayStyle: React.CSSProperties = { fontSize: '1.5rem', fontWeight: 'bold', minWidth: '120px', textAlign: 'center' };
 const gridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '15px' };
 const photoCardStyle: React.CSSProperties = { border: '1px solid #ddd', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer', transition: 'transform 0.2s' };
 const imgStyle: React.CSSProperties = { width: '100%', height: '150px', objectFit: 'cover', display: 'block' };
