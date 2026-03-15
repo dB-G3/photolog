@@ -3,3 +3,4 @@ boto3
 pillow-heif
 hachoir
 opencv-python-headless
+piexif
