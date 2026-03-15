@@ -14,6 +14,7 @@ interface Photo {
   displayUrl: string;      // サムネイル画像（.jpg）
   displayUrlMovie?: string; // 動画の場合、動画本体（.mp4）
   isVideo: boolean;         // APIから返ってくる動画判定フラグ
+  Filename: string;
 }
 
 // Amplifyの初期化
@@ -205,13 +206,38 @@ function App({ signOut, user }: WithAuthenticatorProps) {
                 style={modalImgStyle} 
               />
             )}
-
-            {/* 下部の情報表示 */}
-            <div style={{ color: 'white', marginTop: '10px', textAlign: 'center' }}>
-              <div>{selectedPhoto.ShootingDate.replace('T', ' ')}</div>
+            {/* 1行目：撮影日時 */}
+            <div style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
+              {selectedPhoto.ShootingDate.replace('T', ' ')}
               {selectedPhoto.isVideo && (
-                <span style={{ fontSize: '0.8rem', color: '#aaa' }}>VIDEO MODE</span>
+                <span style={{ 
+                  fontSize: '0.7rem', 
+                  color: '#ff9900', 
+                  marginLeft: '10px', 
+                  border: '1px solid #ff9900', 
+                  padding: '1px 4px', 
+                  borderRadius: '4px',
+                  verticalAlign: 'middle'
+                }}>
+                  VIDEO
+                </span>
               )}
+            </div>
+
+            {/* 2行目：ファイル名 */}
+            <div style={{ fontSize: '0.85rem', color: '#ccc', marginTop: '4px', wordBreak: 'break-all' }}>
+              {(() => {
+                // 1. undefined の可能性を考慮してフォールバックを指定
+                const rawFileName: string = selectedPhoto.Filename || (selectedPhoto.S3Key ? selectedPhoto.S3Key.split('/').pop() : '') || 'unknown';
+
+                try {
+                  // 2. ここに渡る rawFileName は必ず string 型になる
+                  return decodeURIComponent(rawFileName);
+                } catch (e) {
+                  console.error(e);
+                  return rawFileName; //`デコードに失敗したら元の文字列を返す
+                }
+              })()}
             </div>
           </div>
         </div>

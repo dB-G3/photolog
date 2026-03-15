@@ -612,7 +612,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "e52dcfa280589c2cd2bf970574eef5ad2b833b69af8cfc99363e6601f07bad36.zip"
+     "S3Key": "030b5c4f9c900634cfaeb9c1d776aa5e6ef8022faf045f1b7f0601e57825b675.zip"
     },
     "Description": "S3に画像がアップロードされた際にメタデータをDynamoDBに登録するLambda",
     "Environment": {
@@ -652,7 +652,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "InfraStack/S3MetaHandler/Resource",
-    "aws:asset:path": "asset.e52dcfa280589c2cd2bf970574eef5ad2b833b69af8cfc99363e6601f07bad36",
+    "aws:asset:path": "asset.030b5c4f9c900634cfaeb9c1d776aa5e6ef8022faf045f1b7f0601e57825b675",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -960,7 +960,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "e52dcfa280589c2cd2bf970574eef5ad2b833b69af8cfc99363e6601f07bad36.zip"
+     "S3Key": "030b5c4f9c900634cfaeb9c1d776aa5e6ef8022faf045f1b7f0601e57825b675.zip"
     },
     "Description": "写真を取得するAPI",
     "Environment": {
@@ -1007,7 +1007,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "InfraStack/ApiGetPhotosHandler/Resource",
-    "aws:asset:path": "asset.e52dcfa280589c2cd2bf970574eef5ad2b833b69af8cfc99363e6601f07bad36",
+    "aws:asset:path": "asset.030b5c4f9c900634cfaeb9c1d776aa5e6ef8022faf045f1b7f0601e57825b675",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1578,7 +1578,7 @@
      }
     ],
     "SourceObjectKeys": [
-     "fd15ce51c26402f6b4f0e9cf3f33132757b4f3efee4e9de7537040f74b2493cb.zip"
+     "b192ec7df729206bfb1cda87bcfd13aee54f40de874430044633ec286aa4f075.zip"
     ],
     "DestinationBucketName": {
      "Ref": "FrontendBucketEFE2E19C"
@@ -1845,7 +1845,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/+1YX2/bNhD/LOVjwahN0ic/zbHdNFjSelYyYDACg6bOMhuKp/GPPVXQdy8oUoqSJl5XdFiH7Un03fHud8fj8c4nSX3y5nXy+gXbmyOe3R1JsU7q1DJ+R9nerGpzmtRnjt+BXdaEOYtTkGDhw/ojcGvIyGoHlKxbifesADIiLwklHLUhI79FStxDdgV2i5knkfPZNaHk3Ww8Jbe043/QIhfKxN2R+A5YBjoQm1tKNBS4Y3KOUvCKjEgGxmqsCCU70EaggiwAamhNWJZNUJuFk/B9gdCW85Lctla+OiJ/DfyzaiXyu7lbS8HHnIPpgH5hDhTXVWkFKjIi6enqavx+fD6bHgSyh7URFi5UBn9MkbsClO2CP9mokAY0fML2ZR0tx9Ac/DlQEnZHVWfMQEMlK9YZS+rJRs1BF8L4mNC3TnHvxLL2OLkWnUvBx53QqHqYlGyi+INMzLrllqlMgu4OxCkrolhMmNlQ4XJ4zt9o3BtAZ78rlG9nSla1WeyJt0958BCuRtnBLaBAXaXiU59e5RYK0EymFjXLYcDalfx+lbq1AttlqQHutLDVuUZXdsSNkGAqY6GIBIl5K/C9o3Y5dD9kY5deft2yfw13kaZC5RIsqkECOieyDuKfRTJk89zpEs3TyfAvjO4VWJYxy2JofUW6fZoVItzQrFKswGyd1NdsLWFZk5JpK3xAf4aKjGqiBpelKv0y9SXWoLaHJdZCSqHyq4B/Pv5tNZ8tVovZLzez9PpgmbMeSn9JQyK08BoqWJHUC2yRMmNcAdlZC6LUQnFRMjnmHF1/zEHGbxjzvjY0lBRMsRyy1riA8BIOadVYR9kugNc470x0kJd15FrL+PZCSaGg5/V5fZB5WO9h7je736XE0N8fNAL/8SP+PzjPcNua4N2isc/x3nbGrnHR1u5HGL4kZ1lqmQX/LJgHZr+a/Heb/Yfc+qHQtGcdjrmh5nRVM2PAmmTsPzSDUmLl5ZPQrU57QkMl5iapL+OLuqz7x/X+daFfTWxxdLoaykqRMwt7Vu1O2q54XAovkVqWg19cKAu5Zl37skBnW/rY2S1q8Ql0QznmSlhM6hsDeo4o/bsWbvACOO5AV2R0QknJjNmj7ot1TQqhLkHldtuPL787oWEqcnE/jUTiJe5Bc+YbnQf0tCrWKB9L35TlULo59FQbkJtU5OqmnCn/QmdktGHSACVG5OpCjaVgxteXmjgDOrQKUauLLj+KcBcJ2i0mUoDy0223oattzm7fStz32ucxSJ0/npbqsjeYgwLNLKTAtZ95IlL0B+J1cCblmvG7Gy377qzTz+Khtcc5wQzONfNVtlU9cCaAfcalwGwol+iyjUZlk3oqjNVi7fohasOctGewZTuBOsDi2750hs5SwB70XKNFjvfHoiETGrg9sni0tbY0hBJsx+Wu7EftC0Qb5taun9Ua9QJMicrE18Ar8FfRmT7BAvvdc4w5y2HOYkK29zY9DdN6mIQnqKxGGVryyUY9wfPkYUCahk6csVgswKDTHLrmtZ/x25sVmY9k5xp3IgPtx1faFgt/NYXK6VBbgOJs6WwccVft8LBie8OlSMZ7M5GinT1CkTo+fpMcHzFZblny+sVP8X+ZV/47LAlRovbh8pUhhi2HdhWKgV8Nq0Qre18dGjqv7BbVq9Pk+Dg5fvPioxHiKPb9ySJ8PwPUhWhbIRIAAA=="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/+1YX2/bNhD/LOVjwahN0r34aY7tpsGS1rOSAYMRGDR1ltlQPI1/7KmCvvtAkVKUNPG6osM6bE+i7453vzsej3c+SeqTN6+T1y/Y3hzx7O5IinVSp5bxO8r2ZlWb06Q+c/wO7LImzFmcggQLH9YfgVtDRlY7oGTdSrxnBZAReUko4agNGfktUuIesiuwW8w8iZzPrgkl72bjKbmlHf+DFrlQJu6OxHfAMtCB2NxSoqHAHZNzlIJXZEQyMFZjRSjZgTYCFWQBUENrwrJsgtosnIRvC4S2nJfktrXyxRH5a+CfVSuR383dWgo+5hxMB/Qzc6C4rkorUJERSU9XV+P34/PZ9CCQPayNsHChMvh9itwVoGwX/MlGhTSg4RO2L+toOYbm4M+BkrA7qjpjBhoqWbHOWFJPNmoOuhDGx4S+dYp7J5a1x8m16FwKPu6ERtXDpGQTxR9kYtYtt0xlEnR3IE5ZEcViwsyGCpfDc/5K494AOvtNoXw9U7KqzWJPvH3Kg4dwNcoObgEF6ioVn/r0KrdQgGYytahZDgPWruT3q9StFdguSw1wp4WtzjW6siNuhARTGQtFJEjMW4FvHbXLofshG7v08uuW/Uu4izQVKpdgUQ0S0DmRdRD/LJIhm+dOl2ieToZ/YXSvwLKMWRZD6yvS7dOsEOGGZpViBWbrpL5mawnLmpRMW+ED+hNUZFQTNbgsVemXqS+xBrU9LLEWUgqVXwX88/Gvq/lssVrMfr6ZpdcHy5z1UPpLGhKhhddQwYqkXmCLlBnjCsjOWhClFoqLkskx5+j6Yw4yfsOY97WhoaRgiuWQtcYFhJdwSKvGOsp2AbzGeWeig7ysI9daxrcXSgoFPa/P64PMw3oPc7/a/S4lhv5+pxH4jx/x/8F5htvWBO8WjX2O97Yzdo2LtnY/wvA5OctSyyz4Z8E8MPvF5L/b7D/k1neFpj3rcMwNNaermhkD1iRj/6EZlBIrL5+EbnXaExoqMTdJfRlf1GXdP673rwv9YmKLo9PVUFaKnFnYs2p30nbF41J4idSyHPziQlnINevalwU629LHzm5Ri0+gG8oxV8JiUt8Y0HNE6d+1cIMXwHEHuiKjE0pKZswedV+sa1IIdQkqt9t+fPnNCQ1TkYv7aSQSL3EPmjPf6Dygp1WxRvlY+qYsh9LNoafagNykIlc35Uz5Fzojow2TBigxIlcXaiwFM76+1MQZ0KFViFpddPlRhLtI0G4xkQKUn267DV1tc3b7VuK+1z6PQer88bRUl73BHBRoZiEFrv3ME5GiPxCvgzMp14zf3WjZd2edfhYPrT3OCWZwrpmvsq3qgTMB7DMuBWZDuUSXbTQqm9RTYawWa9cPURvmpD2DLdsJ1AEW3/alM3SWAvag5xotcrw/Fg2Z0MDtkcWjrbWlIZRgOy53ZT9qXyDaMLd2/azWqBdgSlQmvgZegb+KzvQJFtjvnmPMWQ5zFhOyvbfpaZjWwyQ8QWU1ytCSTzbqCZ4nDwPSNHTijMViAQad5tA1r/2M396syHwkO9e4ExloP77Stlj4qylUTofaAhRnS2fjiLtqh4cV2xsuRTLem4kU7ewRitTx8Zvk+IjJcsuS1y9+jP/LvPLfYUmIErUPl68MMWw5tKtQDPxqWCVa2fvq0NB5ZbeoXp0mx8fJ8Q8vPhohjmLfnyzC9w8U4UBMIRIAAA=="
    },
    "Metadata": {
     "aws:cdk:path": "InfraStack/CDKMetadata/Default"

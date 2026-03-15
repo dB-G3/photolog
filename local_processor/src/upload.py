@@ -3,6 +3,7 @@ from botocore.exceptions import NoCredentialsError
 import urllib
 import mimetypes
 import urllib.parse
+import os
 
 from botocore.exceptions import ClientError
 
@@ -30,10 +31,11 @@ def upload_thumbnail_with_metadata(file_path, bucket_name, object_name, user_id,
 
     try:
         # メタデータを定義 (x-amz-meta- は自動付与される)
-        safe_shooting_date = urllib.parse.quote(shooting_date)
+        file_name = os.path.basename(file_path)
         metadata = {
             'userid': user_id,
-            'shootingdate': safe_shooting_date
+            'shootingdate': shooting_date,
+            'filename': urllib.parse.quote(file_name)
         }
 
         tags = {

@@ -17,7 +17,7 @@ import shutil
 TARGET_WIDTH = 800
 TARGET_HEIGHT = 600
 BASE_DIR = "../"
-ENV = "prod"
+ENV = "dev"
 
 if ENV == "dev":
     INPUT_DIR = os.path.join(BASE_DIR, "test-data/input")
@@ -94,7 +94,7 @@ def main():
                     bucket_name='photolog-prod-s3-thumbnail-' + user_id,
                     object_name=str(save_path_pict.relative_to(output_path)),
                     user_id=user_id,
-                    shooting_date=iso_date + '#' + str(save_path_pict.name),
+                    shooting_date=iso_date,
                     )
 
             elif img_file.suffix.lower() in [".mov"]:
