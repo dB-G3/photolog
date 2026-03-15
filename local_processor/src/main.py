@@ -38,6 +38,7 @@ def main():
     parser.add_argument('--user', type=str, required=True, help='実行するユーザー名 (yasu, megu など)')
     args = parser.parse_args()
     user_id = args.user
+    num_processed_files = 0
 
     print(f"--- 探索開始: {user_id}:{INPUT_DIR} ---")
     
@@ -155,6 +156,8 @@ def main():
                 print("処理スキップ：" + str(relative_path))
             log_data = log_data + iso_date
             util.output_log(OUTPUT_DIR, log_data)
+            num_processed_files = num_processed_files + 1
+            print(f"Processed...{num_processed_files}")
         else:
             util.output_log(OUTPUT_DIR, "処理スキップ：" + str(img_file.relative_to(input_path)))
 
