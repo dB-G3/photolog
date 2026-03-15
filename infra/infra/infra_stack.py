@@ -247,4 +247,28 @@ class InfraStack(Stack):
         CfnOutput(self, "CloudFrontURL", value=f"https://{distribution.distribution_domain_name}")
 
 
+        # オリジナル画像用バケット (S3 Glacier Deep Archive用)
+        original_bucket_yasu = s3.Bucket(
+            self, "OriginalPhotoBucket-yasu",
+            bucket_name=f"photolog-prod-s3-original-yasu",
+            versioned=False,  # 誤削除防止にバージョニング推奨
+            encryption=s3.BucketEncryption.S3_MANAGED,
+            removal_policy=RemovalPolicy.RETAIN, # 削除時にデータ保持（本番用）
+            auto_delete_objects=False,
+            # ブロックパブリックアクセス（基本は非公開）
+            block_public_access=s3.BlockPublicAccess.BLOCK_ALL,
+        )
+
+        original_bucket_megu = s3.Bucket(
+            self, "OriginalPhotoBucket-megu",
+            bucket_name=f"photolog-prod-s3-original-megu",
+            versioned=True,  # 誤削除防止にバージョニング推奨
+            encryption=s3.BucketEncryption.S3_MANAGED,
+            removal_policy=RemovalPolicy.RETAIN, # 削除時にデータ保持（本番用）
+            auto_delete_objects=False,
+            # ブロックパブリックアクセス（基本は非公開）
+            block_public_access=s3.BlockPublicAccess.BLOCK_ALL,
+        )
+
+
         

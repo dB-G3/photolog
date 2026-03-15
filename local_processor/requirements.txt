@@ -4,3 +4,4 @@ pillow-heif
 hachoir
 opencv-python-headless
 piexif
+python-dotenv
