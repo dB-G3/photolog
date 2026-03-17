@@ -17,7 +17,7 @@ import shutil
 TARGET_WIDTH = 800
 TARGET_HEIGHT = 600
 BASE_DIR = "../"
-ENV = "dev"
+ENV = "prod"
 
 if ENV == "dev":
     INPUT_DIR = os.path.join(BASE_DIR, "test-data/input")
@@ -56,9 +56,9 @@ def main():
             iso_date = "撮影日時取得不可"
             if img_file.suffix.lower() in [".jpg", ".jpeg", ".heic"]:
                 exif_data = picture.get_exif_data(img_file, relative_path, OUTPUT_DIR)
-                if exif_data.get('DateTimeOriginal'): #撮影日時
+                if exif_data and exif_data.get('DateTimeOriginal'): #撮影日時
                     dt = datetime.datetime.strptime(exif_data.get('DateTimeOriginal'), "%Y:%m:%d %H:%M:%S")
-                elif exif_data.get('DateTime'): #修正日時
+                elif exif_data and exif_data.get('DateTime'): #修正日時
                     dt = datetime.datetime.strptime(exif_data.get('DateTime'), "%Y:%m:%d %H:%M:%S")
                 else:
                     # 撮影日時が取得できない場合はUNIXエポック日時の開始日時をセット
