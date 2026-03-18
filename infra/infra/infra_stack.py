@@ -40,8 +40,22 @@ class InfraStack(Stack):
         # 写真を保存するS3バケットの定義
         bucket_yasu = s3.Bucket(self, "PhotologRawBucket-yasu-v2",
             versioned=True,  # 誤削除防止のためにバージョン管理を有効化
-            removal_policy=RemovalPolicy.DESTROY, # 学習用なのでStack削除時にバケットも消す設定（本番はRETAIN推奨）
-            auto_delete_objects=True, # バケット削除時に中身も自動削除する
+            # ライフサイクルルールの設定
+            lifecycle_rules=[
+                s3.LifecycleRule(
+                    id="CleanUpOldVersions-megu",
+                    enabled=True,
+                    
+                    # 非現行バージョン（古いバージョン）の処理
+                    noncurrent_version_expiration=Duration.days(7), # 7日経過で完全削除
+                    #noncurrent_versions_to_retain=0,                 # 最新から0までは残す
+
+                    # 削除マーカーの自動クリーンアップ（ファイルが完全に消えた後の残骸掃除）
+                    expired_object_delete_marker=True
+                )
+            ],
+            removal_policy=RemovalPolicy.RETAIN, # stack削除時にバケットを消す場合はDESTROY
+            auto_delete_objects=False, # バケット削除時に中身も自動削除しない
             bucket_name=f"photolog-prod-s3-thumbnail-yasu",
             cors=[
                 s3.CorsRule(
@@ -57,8 +71,22 @@ class InfraStack(Stack):
 
         bucket_megu = s3.Bucket(self, "PhotologRawBucket-megu-v2",
             versioned=True,  # 誤削除防止のためにバージョン管理を有効化
-            removal_policy=RemovalPolicy.DESTROY, # 学習用なのでStack削除時にバケットも消す設定（本番はRETAIN推奨）
-            auto_delete_objects=True, # バケット削除時に中身も自動削除する
+            # ライフサイクルルールの設定
+            lifecycle_rules=[
+                s3.LifecycleRule(
+                    id="CleanUpOldVersions-megu",
+                    enabled=True,
+                    
+                    # 非現行バージョン（古いバージョン）の処理
+                    noncurrent_version_expiration=Duration.days(7), # 7日経過で完全削除
+                    #noncurrent_versions_to_retain=0,                 # 最新から0までは残す
+
+                    # 削除マーカーの自動クリーンアップ（ファイルが完全に消えた後の残骸掃除）
+                    expired_object_delete_marker=True
+                )
+            ],
+            removal_policy=RemovalPolicy.RETAIN, # stack削除時にバケットを消す場合はDESTROY
+            auto_delete_objects=False, # バケット削除時に中身も自動削除しない
             bucket_name=f"photolog-prod-s3-thumbnail-megu"
         )
 

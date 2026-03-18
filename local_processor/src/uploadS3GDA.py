@@ -7,6 +7,9 @@ import argparse
 import sys
 import hashlib
 import base64
+import util
+
+from botocore.exceptions import ClientError
 
 # .envから環境変数を読み込む（infra/.env またはプロジェクトルートの.env）
 load_dotenv()
@@ -42,11 +45,12 @@ def verify_and_upload(user_id):
 
     zip_files = list(ZIP_DIR.glob("*.zip"))
     if not zip_files:
-        print(f"No zip files found in {ZIP_DIR}")
+        print(f"ディレクトリ{ZIP_DIR}にZIPファイルが見つかりません")
         return
 
-    print(f"Starting verified upload of {len(zip_files)} files...")
+    print(f"アップロード開始　{len(zip_files)} files...")
 
+    num_processed_files = 0
     for zip_path in zip_files:
         file_name = zip_path.name
         s3_key = file_name
@@ -57,6 +61,21 @@ def verify_and_upload(user_id):
         local_md5_hex = hashlib.md5(open(zip_path, 'rb').read()).hexdigest()
 
         print(f"[{file_name}] Local MD5: {local_md5_hex}")
+
+        # S3上の既存チェック
+        try:
+            response = s3_client.head_object(Bucket=BUCKET_NAME, Key=s3_key)
+            s3_etag = response['ETag'].strip('"') # ETagはダブルクォートで囲まれている
+            # 通常のアップロード(Multipartでない場合)は ETag = MD5
+            if local_md5_hex == s3_etag:
+                print(f"[{file_name}] S3のETagと一致しました。スキップ: S3に既に存在します: s3://{BUCKET_NAME}/{s3_key}")
+                continue
+            return True
+        except ClientError as e:
+            # 404 エラー (NotFound) であれば存在しないのでアップロードを続行
+            if e.response['Error']['Code'] != '404':
+                # 404以外（権限エラーなど）は再送すべきでないため例外を出す
+                raise e
 
         try:
             # 2. アップロード (ContentMD5を指定することでS3側で整合性チェックが行われる)
@@ -82,19 +101,25 @@ def verify_and_upload(user_id):
 
             # 通常のアップロード(Multipartでない場合)は ETag = MD5
             if local_md5_hex == s3_etag:
-                print(f"[{file_name}] ✅ 検証成功: S3のETagと一致しました。")
+                print(f"[{file_name}] 検証成功: S3のETagと一致しました。")
             else:
-                print(f"[{file_name}] ⚠️ 警告: ハッシュが一致しません！ (S3 ETag: {s3_etag})")
+                msg = f"[{file_name}] 警告: ハッシュが一致しません！ (S3 ETag: {s3_etag})"
+                print(msg)
+                util.output_error_log(ZIP_DIR, msg)
             
         except Exception as e:
-            print(f"[{file_name}] ❌ 失敗: {str(e)}")
+            msg = f"失敗: {str(e)}"
+            print(f"[{file_name}] msg")
+            util.output_error_log(ZIP_DIR, msg)
+
+        num_processed_files = num_processed_files + 1
+        print(f"処理済み = {num_processed_files}")
 
 def main():
     parser = argparse.ArgumentParser(description='Photolog Local Processor')
     parser.add_argument('--user', type=str, required=True, help='実行するユーザー名 (yasu, megu など)')
     args = parser.parse_args()
     user_id = args.user
-    num_processed_files = 0
 
     verify_and_upload(user_id)
 
