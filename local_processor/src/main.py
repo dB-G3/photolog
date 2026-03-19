@@ -25,7 +25,7 @@ if ENV == "dev":
     OUTPUT_DIR_ORIGINAL = os.path.join(BASE_DIR, "test-data/output/original")
     OUTPUT_ZIP_DIR = os.path.join(BASE_DIR, "test-data/output/zip")
 elif ENV == "prod":
-    INPUT_DIR = os.path.join(BASE_DIR, "real-data/input")
+    INPUT_DIR = os.path.join(BASE_DIR, "real-data/input/Photos from 2021")
     OUTPUT_DIR = os.path.join(BASE_DIR, "real-data/output")
     OUTPUT_DIR_ORIGINAL = os.path.join(BASE_DIR, "real-data/output/original")
     OUTPUT_ZIP_DIR = os.path.join(BASE_DIR, "real-data/output/zip")

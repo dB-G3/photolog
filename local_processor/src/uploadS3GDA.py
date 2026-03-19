@@ -17,7 +17,7 @@ load_dotenv()
 # 設定（環境変数が空の場合はデフォルト値を使用）
 BUCKET_NAME_BASE = 'photolog-prod-s3-original-'
 STORAGE_CLASS = 'DEEP_ARCHIVE'
-ENV = "dev"
+ENV = "prod"
 
 if ENV == "dev":
     ZIP_DIR = Path("../test-data/output/zip")  # ZIPファイルが格納されているディレクトリ
@@ -70,7 +70,9 @@ def verify_and_upload(user_id):
             if local_md5_hex == s3_etag:
                 print(f"[{file_name}] S3のETagと一致しました。スキップ: S3に既に存在します: s3://{BUCKET_NAME}/{s3_key}")
                 continue
-            return True
+            else:
+                print(f"s3://{BUCKET_NAME}/{s3_key}：S3上に同一キーが存在しますがハッシュが一致しないため、別名保存します")
+                s3_key = s3_key + '(1).zip'
         except ClientError as e:
             # 404 エラー (NotFound) であれば存在しないのでアップロードを続行
             if e.response['Error']['Code'] != '404':

@@ -92,7 +92,7 @@ function App({ signOut, user }: WithAuthenticatorProps) {
   return (
     <div style={containerStyle}>
       <header style={{
-        ...headerStyle,
+        //...headerStyle,
         display: 'flex',
         flexDirection: 'column',
         gap: '15px',
@@ -255,7 +255,7 @@ const isVideo = (url: string) => {
 
 // --- スタイル定義（Tailwind未導入のためJSオブジェクトで定義） ---
 const containerStyle: React.CSSProperties = { padding: '20px', maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'stretch' };
-const headerStyle: React.CSSProperties = { display: 'flex', fontSize: '1.5rem', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', borderBottom: '2px solid #eee', paddingBottom: '10px' };
+//const headerStyle: React.CSSProperties = { display: 'flex', fontSize: '1.5rem', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', borderBottom: '2px solid #eee', paddingBottom: '10px' };
 const navStyle: React.CSSProperties = { display: 'flex', alignItems: 'center', gap: '20px' };
 const buttonStyle: React.CSSProperties = { padding: '8px 16px', cursor: 'pointer', fontSize: '1.5rem', borderRadius: '4px', border: '1px solid #ccc', background: '#999' };
 const monthDisplayStyle: React.CSSProperties = { fontSize: '1.5rem', fontWeight: 'bold', minWidth: '120px', textAlign: 'center' };
