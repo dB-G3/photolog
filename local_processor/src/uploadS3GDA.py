@@ -11,6 +11,8 @@ import util
 
 from botocore.exceptions import ClientError
 
+from botocore.config import Config
+
 # .envから環境変数を読み込む（infra/.env またはプロジェクトルートの.env）
 load_dotenv()
 
@@ -37,7 +39,15 @@ def calculate_md5(file_path):
 
 def verify_and_upload(user_id):
     BUCKET_NAME = BUCKET_NAME_BASE + user_id
-    s3_client = boto3.client('s3')
+
+    # リトライ設定：標準的な指数バックオフを有効化
+    config = Config(
+    retries = {
+        'max_attempts': 10, # 最大10回リトライ
+        'mode': 'standard' # 指数バックオフ
+    }
+    )
+    s3_client = boto3.client('s3', config=config)
 
     if not ZIP_DIR.exists():
         print(f"Error: ディレクトリが見つかりません -> {ZIP_DIR}")
