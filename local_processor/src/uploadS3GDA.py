@@ -69,6 +69,8 @@ def verify_and_upload(user_id):
             # 通常のアップロード(Multipartでない場合)は ETag = MD5
             if local_md5_hex == s3_etag:
                 print(f"[{file_name}] S3のETagと一致しました。スキップ: S3に既に存在します: s3://{BUCKET_NAME}/{s3_key}")
+                num_processed_files = num_processed_files + 1
+                print(f"処理済み = {num_processed_files}")
                 continue
             else:
                 print(f"s3://{BUCKET_NAME}/{s3_key}：S3上に同一キーが存在しますがハッシュが一致しないため、別名保存します")
@@ -110,8 +112,8 @@ def verify_and_upload(user_id):
                 util.output_error_log(ZIP_DIR, msg)
             
         except Exception as e:
-            msg = f"失敗: {str(e)}"
-            print(f"[{file_name}] msg")
+            msg = f"アップロードもしくは照合失敗: {str(e)}"
+            print(f"[{file_name}] {msg}")
             util.output_error_log(ZIP_DIR, msg)
 
         num_processed_files = num_processed_files + 1
