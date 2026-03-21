@@ -42,10 +42,12 @@ def verify_and_upload(user_id):
 
     # リトライ設定：標準的な指数バックオフを有効化
     config = Config(
-    retries = {
-        'max_attempts': 10, # 最大10回リトライ
-        'mode': 'standard' # 指数バックオフ
-    }
+        connect_timeout=60,  # 接続タイムアウト（秒）
+        read_timeout=300,    # 読み取りタイムアウト（秒）
+        retries = {
+            'max_attempts': 1000, # 最大1000回リトライ
+            'mode': 'standard' # 指数バックオフ
+        }
     )
     s3_client = boto3.client('s3', config=config)
 
